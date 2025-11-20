@@ -23,7 +23,6 @@
 
 ### Архитектура
 - **`FileStructure.md`** - Этот файл (последнее обновление: 20 ноября 2025)
-- **`REFACTORING_ANALYSIS.md`** - Анализ кодовой базы, технический долг
 - **`MODAL_SYSTEM.md`** - Универсальная система модальных окон
 - **`INPUT_STYLES_EXAMPLES.md`** - Примеры стилей input полей
 
@@ -33,10 +32,6 @@
 
 ### Сервисы
 - **`NOTIFICATION_SERVICE_REFACTORING.md`** - Архитектура сервиса уведомлений
-
-### Багфиксы
-- **`BUGFIX_REMINDERS_NOT_SAVED.md`** - Исправление сохранения напоминаний
-- **`BUGFIX_FREQUENCY_INPUT_NOT_VISIBLE.md`** - Исправление видимости полей частоты
 
 ### Метаинформация
 - **`PROJECT_RULES.md`** - Правила создания документов и ответов в чате (20 ноября 2025)
@@ -246,7 +241,7 @@
 
 **Описание:** Слой чистой бизнес-логики без привязки к React.
 
-### `/services/notifications/` - С��рвис уведомлений
+### `/services/notifications/` - Срвис уведомлений
 - **`index.ts`** - Barrel export (создано: 20 ноября 2025)
 - **`NotificationService.ts`** - Основной класс с логикой Web Notifications API (создано: 20 ноября 2025)
 - **`types.ts`** - TypeScript типы для сервиса (создано: 20 ноября 2025)
