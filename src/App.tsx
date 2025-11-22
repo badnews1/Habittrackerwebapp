@@ -5,27 +5,25 @@
  * Все данные (привычки, категории, цели) и UI состояние теперь хранятся в store.
  * 
  * @module App
- * @see /stores/habitsStore.ts
+ * @see /core/store/index.ts
  */
 
 import React, { useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Sidebar } from './components/layout/Sidebar';
-import { HabitsTable } from './components/habits/HabitsTable';
-import { CalendarHeader } from './components/calendar/CalendarHeader';
-import { RulerControls } from './components/dev/RulerControls';
-import { NotificationManager } from './components/notifications/NotificationManager';
-import { NotificationPermissionBanner } from './components/notifications/NotificationPermissionBanner';
-import { VersionIndicator } from './components/layout/VersionIndicator';
-import { DebugPanel } from './components/dev/DebugPanel';
-import { AppModals } from './components/modals/AppModals';
-import { DateConfig, HabitActions, ModalActions, GoalConfig, UndoConfig } from './types/habitsTableProps';
-import { getDaysInMonth, formatDate, getDayName } from './utils/dateUtils';
-import { useHabitsStore } from './stores/habitsStore';
-import { useRulerState } from './hooks/useRulerState';
-import { useRulerMode } from './hooks/useRulerMode';
-import { recalculateStrength } from './utils/strengthCalculator';
+import { Sidebar } from '@/shared/components/layout';
+import { HabitsTable } from '@/modules/habit-tracker/features/habits';
+import { CalendarHeader } from '@/modules/habit-tracker/features/calendar';
+import { HabitsNotificationManager } from '@/modules/habit-tracker/features/notifications';
+import { NotificationPermissionBanner } from '@/shared/components/notifications';
+import { VersionIndicator } from '@/shared/components/layout';
+import { HabitTrackerModals } from '@/core/modals';
+import { DateConfig, HabitActions, ModalActions, GoalConfig, UndoConfig } from '@/modules/habit-tracker/features/habits/types';
+import { getDaysInMonth, formatDate, getDayName } from '@/shared/utils/date';
+import { useHabitsStore } from '@/core/store';
+import { recalculateStrength } from '@/modules/habit-tracker/features/strength';
+import { Habit } from '@/modules/habit-tracker/types';
+import { Category } from '@/modules/habit-tracker/features/categories';
 
 export default function App() {
   // ==================== ZUSTAND STORE ====================
@@ -47,7 +45,6 @@ export default function App() {
     previousHabitsState,
     
     // Модальные окна
-    showDeleteDialog,
     newlyAddedHabitId,
     numericInputModal,
     isMonthYearPickerOpen,
@@ -65,8 +62,6 @@ export default function App() {
     closeAddHabitModal,
     openManageHabitsModal,
     closeManageHabitsModal,
-    openDeleteDialog,
-    closeDeleteDialog,
     openNumericInputModal,
     closeNumericInputModal,
     openMonthYearPicker,
@@ -98,18 +93,6 @@ export default function App() {
     updateHabitsStrength,
   } = useHabitsStore();
 
-  // ==================== RULER STATE (dev only) ====================
-  const rulerState = useRulerState();
-  
-  // Ruler mode (keyboard + dragging)
-  useRulerMode(
-    rulerState.draggingGuide,
-    rulerState.setDraggingGuide,
-    rulerState.setAddingGuideType,
-    rulerState.setRulerMode,
-    rulerState.setGuides
-  );
-
   // ==================== EFFECTS ====================
   
   // Обновляем силу привычек при загрузке приложения (новый день)
@@ -124,18 +107,8 @@ export default function App() {
 
   // ==================== MODAL HANDLERS ====================
   
-  // Обработчик подтверждения удаления привычки
-  const handleDeleteConfirm = () => {
-    if (showDeleteDialog) {
-      deleteHabit(showDeleteDialog);
-    }
-  };
-
   // Обработчик сохранения числового значения для измеримой привычки
-  const handleNumericInputSave = (value: number) => {
-    if (!numericInputModal) return;
-    
-    const { habitId, date } = numericInputModal;
+  const handleNumericInputSave = (habitId: string, date: string, value: number) => {
     const habit = habits.find(h => h.id === habitId);
     
     if (habit) {
@@ -151,15 +124,10 @@ export default function App() {
       const habitWithStrength = recalculateStrength(updatedHabit);
       updateHabit(habitId, habitWithStrength);
     }
-    
-    closeNumericInputModal();
   };
 
   // Обработчик пропуска (skip) для измеримой привычки
-  const handleNumericInputSkip = () => {
-    if (!numericInputModal) return;
-    
-    const { habitId, date } = numericInputModal;
+  const handleNumericInputSkip = (habitId: string, date: string) => {
     const habit = habits.find(h => h.id === habitId);
     
     if (habit) {
@@ -185,8 +153,6 @@ export default function App() {
       const habitWithStrength = recalculateStrength(updatedHabit);
       updateHabit(habitId, habitWithStrength);
     }
-    
-    closeNumericInputModal();
   };
 
   // Обработчик выбора месяца/года
@@ -224,7 +190,6 @@ export default function App() {
   };
 
   const habitActions: HabitActions = {
-    onDelete: openDeleteDialog,
     onToggleCompletion: toggleCompletion,
     onToggleAllForDay: toggleAllForDay,
     onMoveHabit: moveHabit,
@@ -257,7 +222,7 @@ export default function App() {
   return (
     <div className="flex min-h-screen bg-white">
       {/* Notification Manager */}
-      <NotificationManager habits={habits} />
+      <HabitsNotificationManager habits={habits} />
       
       {/* Sidebar */}
       <Sidebar 
@@ -279,12 +244,9 @@ export default function App() {
         </div>
 
         {/* All Modals */}
-        <AppModals
-          showDeleteDialog={showDeleteDialog}
-          habits={habits}
-          onDeleteConfirm={handleDeleteConfirm}
-          onDeleteCancel={closeDeleteDialog}
+        <HabitTrackerModals
           numericInputModal={numericInputModal}
+          habits={habits}
           onNumericInputClose={closeNumericInputModal}
           onNumericInputSave={handleNumericInputSave}
           onNumericInputSkip={handleNumericInputSkip}
@@ -306,17 +268,9 @@ export default function App() {
           daysInMonth={monthDays.length}
         />
       </main>
-
-      {/* Dev Tools */}
-      {process.env.NODE_ENV === 'development' && (
-        <RulerControls {...rulerState} />
-      )}
       
       <NotificationPermissionBanner />
       <VersionIndicator />
-      {process.env.NODE_ENV === 'development' && (
-        <DebugPanel habits={habits} />
-      )}
     </div>
   );
 }

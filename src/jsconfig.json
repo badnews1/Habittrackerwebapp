@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      
+      // ✅ ПОСТОЯННЫЕ АЛИАСЫ (модульная структура)
+      "@/modules/*": ["./modules/*"],
+      "@/shared/*": ["./shared/*"],
+      "@/core/*": ["./core/*"],
+      "@/components/ui/*": ["./components/ui/*"],     // ⚠️ Shadcn UI (защищено Figma)
+      "@/components/figma/*": ["./components/figma/*"], // ⚠️ Figma (защищено)
+      "@/components/dev/*": ["./components/dev/*"],   // ⚠️ Dev tools (защищено)
+      
+      // ⏳ ВРЕМЕННЫЕ АЛИАСЫ (для безопасной миграции - удалить после Этапа 5)
+      // Эти алиасы позволяют старым импортам продолжать работать во время переноса файлов
+      "@/components/*": ["./components/*"],
+      "@/hooks/*": ["./hooks/*"],
+      "@/utils/*": ["./utils/*"],
+      "@/types/*": ["./types/*"],
+      "@/constants/*": ["./constants/*"],
+      "@/services/*": ["./services/*"]
+    }
+  },
+  "include": [
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

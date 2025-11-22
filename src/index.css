@@ -579,6 +579,10 @@
     position: relative;
   }
 
+  .static {
+    position: static;
+  }
+
   .sticky {
     position: sticky;
   }
@@ -597,10 +601,6 @@
 
   .top-1\/2 {
     top: 50%;
-  }
-
-  .top-4 {
-    top: calc(var(--spacing) * 4);
   }
 
   .top-full {
@@ -667,20 +667,12 @@
     z-index: 50;
   }
 
-  .z-\[55\] {
-    z-index: 55;
-  }
-
   .z-\[60\] {
     z-index: 60;
   }
 
   .z-\[70\] {
     z-index: 70;
-  }
-
-  .z-\[75\] {
-    z-index: 75;
   }
 
   .z-\[100\] {
@@ -817,10 +809,6 @@
     margin-left: calc(var(--spacing) * .5);
   }
 
-  .ml-2 {
-    margin-left: calc(var(--spacing) * 2);
-  }
-
   .block {
     display: block;
   }
@@ -831,10 +819,6 @@
 
   .grid {
     display: grid;
-  }
-
-  .inline {
-    display: inline;
   }
 
   .inline-block {
@@ -925,16 +909,8 @@
     height: 100%;
   }
 
-  .h-px {
-    height: 1px;
-  }
-
   .h-screen {
     height: 100vh;
-  }
-
-  .max-h-40 {
-    max-height: calc(var(--spacing) * 40);
   }
 
   .max-h-60 {
@@ -955,10 +931,6 @@
 
   .max-h-\[200px\] {
     max-height: 200px;
-  }
-
-  .max-h-\[300px\] {
-    max-height: 300px;
   }
 
   .max-h-\[340px\] {
@@ -1021,10 +993,6 @@
     width: calc(var(--spacing) * 10);
   }
 
-  .w-12 {
-    width: calc(var(--spacing) * 12);
-  }
-
   .w-14 {
     width: calc(var(--spacing) * 14);
   }
@@ -1061,10 +1029,6 @@
     width: 182px;
   }
 
-  .w-\[240px\] {
-    width: 240px;
-  }
-
   .w-\[252px\] {
     width: 252px;
   }
@@ -1087,10 +1051,6 @@
 
   .w-full {
     width: 100%;
-  }
-
-  .w-px {
-    width: 1px;
   }
 
   .max-w-2xl {
@@ -1193,16 +1153,8 @@
     rotate: -90deg;
   }
 
-  .rotate-180 {
-    rotate: 180deg;
-  }
-
   .transform {
     transform: var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);
-  }
-
-  .cursor-crosshair {
-    cursor: crosshair;
   }
 
   .cursor-grab {
@@ -1211,10 +1163,6 @@
 
   .cursor-help {
     cursor: help;
-  }
-
-  .cursor-move {
-    cursor: move;
   }
 
   .cursor-not-allowed {
@@ -2767,12 +2715,6 @@
   }
 
   @media (hover: hover) {
-    .hover\:text-red-500:hover {
-      color: var(--color-red-500);
-    }
-  }
-
-  @media (hover: hover) {
     .hover\:text-red-600:hover {
       color: var(--color-red-600);
     }
@@ -2782,12 +2724,6 @@
     .hover\:decoration-blue-600:hover {
       -webkit-text-decoration-color: var(--color-blue-600);
       text-decoration-color: var(--color-blue-600);
-    }
-  }
-
-  @media (hover: hover) {
-    .hover\:opacity-80:hover {
-      opacity: .8;
     }
   }
 
