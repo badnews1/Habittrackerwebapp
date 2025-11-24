@@ -4,13 +4,19 @@
  * Используется в измеримых привычках для выбора единицы измерения.
  * Поддерживает внутреннее и внешнее управление состоянием.
  * 
+ * ОБНОВЛЕНИЕ 22 ноября 2025:
+ * ✅ Мигрировано на Dropdown конструктор
+ * ✅ Добавлена группировка единиц по категориям (ОГРОМНОЕ UX улучшение!)
+ * ✅ 22 единицы разбиты на 4 логические группы (было: плоский список)
+ * 
  * @module modules/habit-tracker/features/habits/components/manage/UnitPicker
- * @migrated 22 ноября 2025
+ * @created 22 ноября 2025
+ * @updated 22 ноября 2025 - мигрировано на Dropdown конструктор с группировкой ⭐
  */
 
 import React from 'react';
 import { ChevronDown } from '@/shared/icons';
-import { useDropdown } from '@/shared/hooks/use-dropdown';
+import { Dropdown } from '@/shared/constructors/dropdown';
 import { UNIT_OPTIONS } from '@/modules/habit-tracker/shared/constants/units';
 
 interface UnitPickerProps {
@@ -21,27 +27,47 @@ interface UnitPickerProps {
   onToggle?: () => void;
 }
 
+// Группировка единиц измерения для улучшения UX
+const UNIT_GROUPS = [
+  {
+    label: 'Счёт',
+    units: ['разы', 'штуки', 'баллы', 'подходы', 'задачи'],
+  },
+  {
+    label: 'Время',
+    units: ['минуты', 'часы'],
+  },
+  {
+    label: 'Расстояние и движение',
+    units: ['шаги', 'километры', 'метры'],
+  },
+  {
+    label: 'Здоровье и питание',
+    units: ['калории', 'килограммы', 'граммы', 'стаканы', 'литры', 'милилитры', 'порции', 'чашки'],
+  },
+  {
+    label: 'Чтение и обучение',
+    units: ['страницы', 'слова', 'главы'],
+  },
+  {
+    label: 'Финансы',
+    units: ['руб.', '$', '€'],
+  },
+] as const;
+
 export const UnitPicker: React.FC<UnitPickerProps> = ({
   selectedUnit,
   onSelectUnit,
   isOpen,
   onToggle,
 }) => {
-  // Используем универсальный хук dropdown
-  const dropdown = useDropdown({
-    isOpen,
-    onToggle,
-  });
-
   const handleSelect = (unit: string) => {
     onSelectUnit(unit);
-    dropdown.close();
   };
 
   return (
-    <div className="relative" ref={dropdown.ref} data-picker="unit">
-      <button
-        onClick={dropdown.toggle}
+    <Dropdown.Root isOpen={isOpen} onToggle={onToggle}>
+      <Dropdown.Trigger
         className={`w-full px-3 py-2 border border-gray-200 rounded hover:border-gray-300 transition-colors text-sm text-left flex items-center gap-2 ${
           selectedUnit ? 'text-gray-900' : 'text-gray-400'
         }`}
@@ -50,23 +76,23 @@ export const UnitPicker: React.FC<UnitPickerProps> = ({
           {selectedUnit || 'Выберите единицу измерения'}
         </span>
         <ChevronDown className="w-4 h-4" />
-      </button>
+      </Dropdown.Trigger>
 
-      {dropdown.isOpen && (
-        <div className="absolute left-0 top-full mt-1 z-50 bg-white border border-gray-200 rounded-lg shadow-lg w-full max-h-[200px] overflow-y-auto">
-          {UNIT_OPTIONS.map((unitOption) => (
-            <button
-              key={unitOption}
-              onClick={() => handleSelect(unitOption)}
-              className={`w-full px-3 py-2 text-left hover:bg-gray-50 transition-colors text-sm ${
-                selectedUnit === unitOption ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
-              }`}
-            >
-              {unitOption}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+      <Dropdown.Content>
+        {UNIT_GROUPS.map((group) => (
+          <Dropdown.Group key={group.label} label={group.label}>
+            {group.units.map((unit) => (
+              <Dropdown.Item
+                key={unit}
+                selected={selectedUnit === unit}
+                onClick={() => handleSelect(unit)}
+              >
+                {unit}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Group>
+        ))}
+      </Dropdown.Content>
+    </Dropdown.Root>
   );
 };

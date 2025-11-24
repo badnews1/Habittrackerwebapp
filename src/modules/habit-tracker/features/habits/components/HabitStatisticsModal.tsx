@@ -233,7 +233,7 @@ export const HabitStatisticsModal: React.FC<HabitStatisticsModalProps> = ({
   return (
     <Modal.Root level="modal" onClose={onClose}>
       <Modal.Backdrop onClick={onClose} />
-      <Modal.Content size="xl" className="max-h-[90vh] flex flex-col">
+      <Modal.Content size="6xl" className="max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex-1 pr-4">
@@ -259,8 +259,8 @@ export const HabitStatisticsModal: React.FC<HabitStatisticsModalProps> = ({
               
               {/* График истории силы привычки */}
               {chartData.length > 0 && (
-                <div className="mt-6 h-48 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
+                <div className="mt-6" style={{ width: '100%', height: '192px', minHeight: '192px', minWidth: '100px' }}>
+                  <ResponsiveContainer width="100%" height={192} minHeight={192}>
                     <LineChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis 

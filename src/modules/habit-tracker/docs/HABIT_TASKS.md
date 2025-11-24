@@ -385,7 +385,7 @@ export const DEFAULT_CATEGORIES = [
 📁 **Файл:** `/shared/constants/colors.ts`
 
 ```typescript
-export const CATEGORY_COLORS = [
+export const TAG_COLORS = [
   'bg-gray-200 text-gray-800 border-gray-300',  // ✅ Уже есть
   // ... остальные
 ];
@@ -490,7 +490,7 @@ N = 64 дня (период ~2 месяца)  <!-- ИЗМЕНИТЬ -->
 ```bash
 /modules/habit-tracker/features/habits/utils/habitUtils.ts          # Проверка выполнения
 /modules/habit-tracker/features/strength/utils/strengthCalculator.ts  # Расчёт EMA
-/modules/habit-tracker/shared/constants/units.ts                     # 22 единицы
+/modules/habit-tracker/shared/constants/units.ts                     # 22 ед��ницы
 ```
 
 **Store:**
@@ -528,4 +528,4 @@ N = 64 дня (период ~2 месяца)  <!-- ИЗМЕНИТЬ -->
 
 ---
 
-**Вопросы?** Смотри код, читай `BUSINESS_LOGIC.md` ��ли спрашивай! 🚀
+**Вопросы?** Смотри код, читай `BUSINESS_LOGIC.md` ли спрашивай! 🚀

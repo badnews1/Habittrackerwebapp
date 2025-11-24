@@ -149,7 +149,6 @@ import { CalendarGrid } from '@/modules/habit-tracker/features/calendar';
 **Store зависимости:**
 - `toggleCompletion` - переключение выполнения привычки
 - `updateHabit` - обновление привычки
-- `toggleAllForDay` - отметить всё за день
 - `openNumericInputModal` - открыть модалку ввода числа
 
 **Зависимости от других фич:**

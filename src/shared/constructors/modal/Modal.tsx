@@ -109,7 +109,7 @@ function ModalRoot({
   }[level];
 
   const modalContent = (
-    <div className={`${MODAL_STYLES.center} ${zIndex} ${className}`}>
+    <div className={`${MODAL_STYLES.center} ${zIndex} ${className}`} data-modal="true" data-modal-level={level}>
       {children}
     </div>
   );

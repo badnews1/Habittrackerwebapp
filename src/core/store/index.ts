@@ -13,11 +13,12 @@
  *   - manageHabitsModal.ts - модалка управления привычками
  *   - addHabitForm.ts - форма добавления привычки
  *   - habits.ts - CRUD привычек
- *   - categories.ts - управление категориями
+ *   - tags.ts - управление тегами
  *   - goals.ts - управление целями
  *   - internal.ts - внутренние системные actions
  * 
  * @module core/store
+ * @updated 23 ноября 2025 - миграция categories → tags
  * @see https://github.com/pmndrs/zustand
  */
 
@@ -30,7 +31,8 @@ import { createModalsSlice } from './slices/modals';
 import { createManageHabitsModalSlice } from './slices/manageHabitsModal';
 import { createAddHabitFormSlice } from './slices/addHabitForm';
 import { createHabitsSlice } from './slices/habits';
-import { createCategoriesSlice } from './slices/categories';
+import { createTagsSlice } from './slices/tags';
+import { createSectionsSlice } from './slices/sections';
 import { createGoalsSlice } from './slices/goals';
 import { createInternalSlice } from './slices/internal';
 import { storageLogger } from '@/shared/utils/logger';
@@ -39,7 +41,7 @@ import { storageLogger } from '@/shared/utils/logger';
  * Главный Zustand store приложения
  * 
  * Использует persist middleware для автоматического сохранения данных в localStorage.
- * Только данные (habits, categories, goals) сохраняются, UI состояние - нет.
+ * Только данные (habits, tags, goals) сохраняются, UI состояние - нет.
  */
 export const useHabitsStore = create<HabitsState>()(
   persist(
@@ -53,7 +55,8 @@ export const useHabitsStore = create<HabitsState>()(
       ...createManageHabitsModalSlice(...args),
       ...createAddHabitFormSlice(...args),
       ...createHabitsSlice(...args),
-      ...createCategoriesSlice(...args),
+      ...createTagsSlice(...args),
+      ...createSectionsSlice(...args),
       ...createGoalsSlice(...args),
       ...createInternalSlice(...args),
     }),
@@ -62,7 +65,8 @@ export const useHabitsStore = create<HabitsState>()(
       partialize: (state) => ({
         // Сохраняем только данные, UI состояние не сохраняем
         habits: state.habits,
-        categories: state.categories,
+        tags: state.tags,
+        sections: state.sections,
         dailyGoals: state.dailyGoals,
         defaultDailyGoal: state.defaultDailyGoal,
       }),

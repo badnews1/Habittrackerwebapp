@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useClickOutside } from '@/shared/hooks/use-click-outside';
 
 /**
@@ -117,7 +117,7 @@ interface UseDropdownReturn {
  * );
  * 
  * @since 19 ноября 2025
- * @updated 21 ноября 2025 - мигрирован в /shared/hooks
+ * @updated 22 ноября 2025 - добавлена поддержка Escape для закрытия dropdown
  * 
  * @param options - Опции конфигурации хука
  * @returns Объект с состоянием и методами управления dropdown
@@ -142,8 +142,8 @@ export function useDropdown(options: UseDropdownOptions = {}): UseDropdownReturn
   
   // Toggle функция
   const toggle = useCallback(() => {
-    if (isControlled && externalOnToggle) {
-      externalOnToggle();
+    if (isControlled) {
+      externalOnToggle?.();
     } else {
       setInternalIsOpen(prev => !prev);
     }
@@ -186,6 +186,23 @@ export function useDropdown(options: UseDropdownOptions = {}): UseDropdownReturn
     },
     shouldCloseOnClickOutside
   );
+  
+  // Закрытие при нажатии Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        close();
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscape);
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, close]);
   
   return {
     isOpen,

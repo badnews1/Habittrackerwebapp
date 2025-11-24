@@ -38,12 +38,17 @@ export const AddHabitModal: React.FC<AddHabitModalProps> = ({
   // Получаем состояние и actions из store с useShallow для оптимизации
   const {
     form,
+    habits,
+    sections,
+    addSection,
+    deleteSection,
     initializeAddHabitForm,
     resetAddHabitForm,
     setFormName,
     setFormDescription,
     setFormIcon,
-    setFormCategory,
+    setFormTags,
+    setFormSection,
     setFormType,
     setFormFrequency,
     setFormCurrentStep,
@@ -67,12 +72,17 @@ export const AddHabitModal: React.FC<AddHabitModalProps> = ({
   } = useHabitsStore(
     useShallow((state) => ({
       form: state.addHabitForm,
+      habits: state.habits,
+      sections: state.sections,
+      addSection: state.addSection,
+      deleteSection: state.deleteSection,
       initializeAddHabitForm: state.initializeAddHabitForm,
       resetAddHabitForm: state.resetAddHabitForm,
       setFormName: state.setFormName,
       setFormDescription: state.setFormDescription,
       setFormIcon: state.setFormIcon,
-      setFormCategory: state.setFormCategory,
+      setFormTags: state.setFormTags,
+      setFormSection: state.setFormSection,
       setFormType: state.setFormType,
       setFormFrequency: state.setFormFrequency,
       setFormCurrentStep: state.setFormCurrentStep,
@@ -104,7 +114,7 @@ export const AddHabitModal: React.FC<AddHabitModalProps> = ({
             name: initialData.name,
             description: initialData.description,
             icon: initialData.icon,
-            category: initialData.category,
+            tag: initialData.tag,
             type: initialData.type as HabitType,
             frequency: initialData.frequency,
             reminders: initialData.reminders,
@@ -151,7 +161,8 @@ export const AddHabitModal: React.FC<AddHabitModalProps> = ({
       name: data.name,
       description: data.description,
       icon: data.icon,
-      category: data.category,
+      tags: data.tags,
+      section: data.section,
       frequency: data.frequency,
       type: data.type,
       reminders: data.reminders,
@@ -166,7 +177,7 @@ export const AddHabitModal: React.FC<AddHabitModalProps> = ({
 
   return (
     <>
-      <Modal.Root level="dialog" onClose={handleClose}>
+      <Modal.Root level="modal" onClose={handleClose}>
         <Modal.Backdrop onClick={handleClose} />
         <Modal.Content size="xl">
           {/* Header */}
@@ -188,8 +199,14 @@ export const AddHabitModal: React.FC<AddHabitModalProps> = ({
               onNameChange={setFormName}
               icon={form.icon}
               onIconChange={setFormIcon}
-              category={form.category}
-              onCategoryChange={setFormCategory}
+              tags={form.tags}
+              onTagsChange={setFormTags}
+              section={form.section}
+              onSectionChange={setFormSection}
+              sections={sections}
+              onAddSection={addSection}
+              onDeleteSection={deleteSection}
+              getSectionUsageCount={(name) => habits.filter(h => h.section === name).length}
               type={form.type}
               onTypeChange={setFormType}
               openPicker={form.openPicker}

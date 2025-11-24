@@ -58,6 +58,7 @@ export function useHabitsFilter(
   const {
     initialState = {},
     enableCategoryFilter = true,
+    enableSectionFilter = true,
     enableTypeFilter = true,
     enableUncategorizedFilter = true,
   } = config;
@@ -69,6 +70,9 @@ export function useHabitsFilter(
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
     initialState.selectedCategories ?? new Set()
   );
+  const [selectedSections, setSelectedSections] = useState<Set<string>>(
+    initialState.selectedSections ?? new Set()
+  );
   const [selectedTypes, setSelectedTypes] = useState<Set<HabitType>>(
     initialState.selectedTypes ?? new Set(['binary', 'measurable'])
   );
@@ -76,6 +80,9 @@ export function useHabitsFilter(
   // UI состояние для аккордеонов
   const [isCategoryExpanded, setIsCategoryExpanded] = useState(
     initialState.isCategoryExpanded ?? false
+  );
+  const [isSectionExpanded, setIsSectionExpanded] = useState(
+    initialState.isSectionExpanded ?? false
   );
   const [isTypeExpanded, setIsTypeExpanded] = useState(
     initialState.isTypeExpanded ?? false
@@ -96,6 +103,16 @@ export function useHabitsFilter(
     setSelectedCategories(newSet);
   };
 
+  const toggleSection = (sectionName: string) => {
+    const newSet = new Set(selectedSections);
+    if (newSet.has(sectionName)) {
+      newSet.delete(sectionName);
+    } else {
+      newSet.add(sectionName);
+    }
+    setSelectedSections(newSet);
+  };
+
   const toggleType = (type: HabitType) => {
     const newSet = new Set(selectedTypes);
     if (newSet.has(type)) {
@@ -109,6 +126,7 @@ export function useHabitsFilter(
   const clearAllFilters = () => {
     setShowUncategorized(true);
     setSelectedCategories(new Set());
+    setSelectedSections(new Set());
     setSelectedTypes(new Set(['binary', 'measurable']));
   };
 
@@ -117,32 +135,43 @@ export function useHabitsFilter(
     return (
       showUncategorized !== true ||
       selectedCategories.size > 0 ||
+      selectedSections.size > 0 ||
       selectedTypes.size < 2
     );
-  }, [showUncategorized, selectedCategories, selectedTypes]);
+  }, [showUncategorized, selectedCategories, selectedSections, selectedTypes]);
 
   // Подсчет количества активных фильтров
   const activeFiltersCount = useMemo(() => {
     let count = 0;
     if (!showUncategorized) count++;
     count += selectedCategories.size;
+    count += selectedSections.size;
     if (selectedTypes.size === 1) count++;
     return count;
-  }, [showUncategorized, selectedCategories, selectedTypes]);
+  }, [showUncategorized, selectedCategories, selectedSections, selectedTypes]);
 
   // Фильтрация привычек на основе текущих настроек
   const filteredHabits = useMemo(() => {
     return habits.filter((habit) => {
       // Фильтр по uncategorized
-      if (enableUncategorizedFilter && !showUncategorized && !habit.category) {
+      if (enableUncategorizedFilter && !showUncategorized && (!habit.tags || habit.tags.length === 0)) {
         return false;
       }
 
-      // Фильтр по выбранным категориям
+      // Фильтр по категориям
       if (
         enableCategoryFilter &&
         selectedCategories.size > 0 &&
-        !selectedCategories.has(habit.category || '')
+        (!habit.tags || !habit.tags.some(tag => selectedCategories.has(tag)))
+      ) {
+        return false;
+      }
+
+      // Фильтр по секциям
+      if (
+        enableSectionFilter &&
+        selectedSections.size > 0 &&
+        !selectedSections.has(habit.section || 'Другие')
       ) {
         return false;
       }
@@ -162,9 +191,11 @@ export function useHabitsFilter(
     habits,
     showUncategorized,
     selectedCategories,
+    selectedSections,
     selectedTypes,
     enableUncategorizedFilter,
     enableCategoryFilter,
+    enableSectionFilter,
     enableTypeFilter,
   ]);
 
@@ -174,8 +205,10 @@ export function useHabitsFilter(
   const state: HabitsFilterState = {
     showUncategorized,
     selectedCategories,
+    selectedSections,
     selectedTypes,
     isCategoryExpanded,
+    isSectionExpanded,
     isTypeExpanded,
   };
 
@@ -183,9 +216,11 @@ export function useHabitsFilter(
   const actions: HabitsFilterActions = {
     toggleUncategorized,
     toggleCategory,
+    toggleSection,
     toggleType,
     clearAllFilters,
     toggleCategoryExpanded: () => setIsCategoryExpanded(!isCategoryExpanded),
+    toggleSectionExpanded: () => setIsSectionExpanded(!isSectionExpanded),
     toggleTypeExpanded: () => setIsTypeExpanded(!isTypeExpanded),
   };
 

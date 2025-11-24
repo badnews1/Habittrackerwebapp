@@ -24,12 +24,16 @@ export interface HabitsFilterState {
   showUncategorized: boolean;
   /** Set выбранных категорий для фильтрации */
   selectedCategories: Set<string>;
+  /** Set выбранных разделов для фильтрации */
+  selectedSections: Set<string>;
   
   /** Set выбранных типов привычек */
   selectedTypes: Set<HabitType>;
   
   /** Развёрнута ли секция категорий в UI */
   isCategoryExpanded: boolean;
+  /** Развёрнута ли секция разделов в UI */
+  isSectionExpanded: boolean;
   /** Развёрнута ли секция типов в UI */
   isTypeExpanded: boolean;
 }
@@ -54,12 +58,16 @@ export interface HabitsFilterActions {
   toggleUncategorized: () => void;
   /** Переключить фильтр по конкретной категории */
   toggleCategory: (categoryName: string) => void;
+  /** Переключить фильтр по конкретному разделу */
+  toggleSection: (sectionName: string) => void;
   /** Переключить фильтр по типу привычки */
   toggleType: (type: HabitType) => void;
   /** Сбросить все фильтры к дефолтным значениям */
   clearAllFilters: () => void;
   /** Переключить развёрнутость секции категорий */
   toggleCategoryExpanded: () => void;
+  /** Переключить развёрнутость секции разделов */
+  toggleSectionExpanded: () => void;
   /** Переключить развёрнутость секции типов */
   toggleTypeExpanded: () => void;
 }
@@ -72,6 +80,8 @@ export interface HabitsFilterConfig {
   initialState?: Partial<HabitsFilterState>;
   /** Включить фильтрацию по категориям */
   enableCategoryFilter?: boolean;
+  /** Включить фильтрацию по разделам */
+  enableSectionFilter?: boolean;
   /** Включить фильтрацию по типам */
   enableTypeFilter?: boolean;
   /** Включить фильтрацию "без категории" */

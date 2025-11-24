@@ -26,7 +26,6 @@ export interface DateConfig {
  */
 export interface HabitActions {
   onToggleCompletion: (habitId: string, date: string, value?: number) => void;
-  onToggleAllForDay: (date: string) => void;
   onMoveHabit: (dragIndex: number, hoverIndex: number) => void;
   onUpdateHabit: (id: string, updates: Partial<Habit>) => void;
 }

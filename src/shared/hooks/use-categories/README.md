@@ -77,14 +77,14 @@ function useCategoriesManager<T extends BaseCategory>(
 
 ```typescript
 import { useCategoriesManager } from '@/shared/hooks/use-categories';
-import { CATEGORY_COLORS } from '@/shared/constants';
+import { TAG_COLORS } from '@/shared/constants';
 
 function MyComponent() {
   const categories = useHabitsStore(state => state.categories);
   
   const manager = useCategoriesManager(
     categories,
-    CATEGORY_COLORS[0]
+    TAG_COLORS[0]
   );
   
   return (
@@ -110,7 +110,7 @@ function MyComponent() {
 ```typescript
 const manager = useCategoriesManager(
   categories,
-  CATEGORY_COLORS[0],
+  TAG_COLORS[0],
   (categoryName) => {
     // Очистить category у всех привычек
     habits.forEach(habit => {
@@ -131,7 +131,7 @@ function ManageModal() {
   
   const manager = useCategoriesManager(
     categories,
-    CATEGORY_COLORS[0]
+    TAG_COLORS[0]
   );
   
   const handleSave = () => {

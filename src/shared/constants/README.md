@@ -11,25 +11,14 @@
 
 ### `colors.ts` - Цветовая палитра
 **Что содержит:**
-- `CATEGORY_COLORS` - 20 цветов для категорий привычек
+- `TAG_COLORS` - 20 базовых цветов Tailwind для тегов привычек (светлые bg-*-200), исключая neutral и slate
 - `COLOR_DISPLAY_MAP` - маппинг светлых цветов (bg-*-200) в яркие (bg-*-500)
 - `HABIT_STATUS_COLORS` - цвета для статусов (completed, frozen, incomplete, future)
-- `STRENGTH_CHART_COLORS` - цвета для графиков силы привычки
-- `STRENGTH_THRESHOLDS` - пороговые значения силы (weak, medium, strong)
-- `PROGRESS_BAR_COLORS` - цвета прогресс-баров
-- **`BUTTON_COLORS`** - цвета кнопок (primary, secondary, danger, warning, ghost, close)
-- **`INPUT_COLORS`** - цвета форм и инпутов (base, label, counter, error)
-- **`MODAL_COLORS`** - цвета модальных окон (overlay, container, header, footer)
-- **`BORDER_COLORS`** - цвета границ (light, medium, dark, focus, hover, dashed)
-- **`BACKGROUND_COLORS`** - цвета фона (white, gray50-200, transparent)
-- **`TEXT_COLORS`** - цвета текста (primary, secondary, muted, disabled, success, danger)
-- **`ICON_COLORS`** - цвета иконок (default, hover, disabled, danger)
-- Утилитные функции: `getVibrantColor()`, `getStrengthColor()`
 
 **Пример использования:**
 ```typescript
 import { 
-  CATEGORY_COLORS, 
+  TAG_COLORS, 
   COLOR_DISPLAY_MAP, 
   getVibrantColor,
   BUTTON_COLORS,
@@ -104,11 +93,11 @@ import { MODAL_STYLES, Z_INDEX, INPUT_STYLES } from '@/shared/constants/styles';
 
 ### `validation.ts` - Правила валидации
 **Что содержит:**
-- `TEXT_LENGTH_LIMITS` - ограничения длины полей (habitName: 25, description: 200)
+- `TEXT_LENGTH_LIMITS` - ограничения длины полей (habitName: 25, tagName: 15, description: 200)
 - `NUMERIC_LIMITS` - диапазоны числовых значений
 - `VALIDATION_PATTERNS` - regex паттерны для валидации
 - `VALIDATION_MESSAGES` - сообщения об ошибках
-- Утилитные функции: `validateHabitName()`, `validateCategoryName()`, и т.д.
+- Утилитные функции: `validateHabitName()`, `validateTagName()`, и т.д.
 
 **Пример использования:**
 ```typescript

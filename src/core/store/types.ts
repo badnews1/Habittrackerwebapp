@@ -5,11 +5,11 @@
  * Разделение типов улучшает читаемость и переиспользование кода.
  * 
  * @module core/store/types
- * @updated 22 ноября 2025 - обновлены импорты на модульные типы
+ * @updated 23 ноября 2025 - миграция categories → tags
  */
 
 import { Habit, HabitData, HabitType, FrequencyConfig, Reminder } from '@/modules/habit-tracker/types';
-import { Category } from '@/modules/habit-tracker/features/categories';
+import { Tag } from '@/modules/habit-tracker/features/tags';
 import type { AddHabitFormActions } from './slices/addHabitForm';
 
 /**
@@ -40,7 +40,8 @@ export interface AddHabitFormState {
   name: string;
   description: string;
   icon: string;
-  category: string;
+  tags: string[];
+  section: string;
   type: HabitType;
   
   /** Частота выполнения */
@@ -59,7 +60,7 @@ export interface AddHabitFormState {
   
   /** UI состояние */
   currentStep: 1 | 2 | 3;
-  openPicker: 'unit' | 'targetType' | 'icon' | 'category' | 'type' | null;
+  openPicker: 'unit' | 'targetType' | 'icon' | 'tag' | 'section' | 'type' | null;
   currentIconPage: number;
   
   /** Флаг инициализации */
@@ -73,8 +74,10 @@ export interface HabitsState extends AddHabitFormActions {
   // ==================== ДАННЫЕ ====================
   /** Список всех привычек */
   habits: Habit[];
-  /** Список категорий */
-  categories: Category[];
+  /** Список тегов */
+  tags: Tag[];
+  /** Список разделов */
+  sections: string[];
   /** Цели по дням: ключ - дата (YYYY-MM-DD), значение - количество привычек */
   dailyGoals: { [date: string]: number };
   /** Дефолтная дневная цель (строка для пустого значения) */
@@ -161,8 +164,8 @@ export interface HabitsState extends AddHabitFormActions {
   setExpandedHabitId: (habitId: string | null) => void;
   /** Получить привычки для сохранения (фильтрация пустых имен) */
   getHabitsToSave: () => Habit[];
-  /** Очистить категорию у всех локальных привычек */
-  clearCategoryFromLocalHabits: (categoryName: string) => void;
+  /** Очистить тег у всех локальных привычек */
+  clearTagFromLocalHabits: (tagName: string) => void;
   /** Сохранить изменения из модального окна в глобальное состояние */
   saveManageHabitsChanges: () => void;
 
@@ -175,22 +178,24 @@ export interface HabitsState extends AddHabitFormActions {
   updateHabit: (habitId: string, updates: Partial<Habit>) => void;
   /** Переключить выполнение привычки */
   toggleCompletion: (habitId: string, date: string) => void;
-  /** Переключить все привычки за день */
-  toggleAllForDay: (date: string) => void;
   /** Переместить привычку (drag-n-drop) */
   moveHabit: (dragIndex: number, hoverIndex: number) => void;
-  /** Очистить все галочки текущего меся��а */
+  /** Очистить все галочки текущего месяца */
   clearAllCompletions: () => void;
   /** Отменить очистку всех галочек */
   undoClearAllCompletions: () => void;
 
-  // ==================== ACTIONS: КАТЕГОРИИ ====================
-  /** Добавить категорию */
-  addCategory: (categoryName: string) => void;
-  /** Удалить категорию */
-  deleteCategory: (categoryName: string) => void;
-  /** Обновить цвет категории */
-  updateCategoryColor: (categoryName: string, color: string) => void;
+  // ==================== ACTIONS: ТЕГИ ====================
+  /** Добавить тег */
+  addTag: (tagName: string, color?: string) => void;
+  /** Удалить тег */
+  deleteTag: (tagName: string) => void;
+
+  // ==================== ACTIONS: РАЗДЕЛЫ ====================
+  /** Добавить раздел */
+  addSection: (name: string) => void;
+  /** Удалить раздел */
+  deleteSection: (name: string) => void;
 
   // ==================== ACTIONS: ЦЕЛИ ====================
   /** Установить цели по дням */

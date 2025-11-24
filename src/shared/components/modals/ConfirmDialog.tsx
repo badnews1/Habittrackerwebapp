@@ -43,9 +43,9 @@ export function ConfirmDialog({
   return (
     <Modal.Root level="dialog" onClose={onCancel}>
       <Modal.Backdrop onClick={onCancel} />
-      <Modal.Content size="md" className="p-8">
+      <Modal.Content size="sm" className="p-8">
         <h4 className="text-gray-900 mb-3">{title}</h4>
-        <p className="text-gray-500 mb-8">{message}</p>
+        <p className="text-sm text-gray-500 mb-8 whitespace-pre-line">{message}</p>
         <div className="flex gap-3">
           <Button
             variant="secondary"

@@ -2,13 +2,14 @@
  * Slice для управления формой добавления привычки
  * 
  * Содержит всю логику работы с формой:
- * - Состояние полей (name, description, icon, category, type, frequency, reminders)
+ * - Состояние полей (name, description, icon, tag, type, frequency, reminders)
  * - UI состояние (currentStep, openPicker, currentIconPage)
  * - Handlers для напоминаний, навигации по шагам, валидации
  * - Инициализация формы с начальными данными
  * - Сброс формы после submit
  * 
  * @module core/store/slices/addHabitForm
+ * @updated 23 ноября 2025 - миграция category → tag
  */
 
 import { StateCreator } from 'zustand';
@@ -22,7 +23,8 @@ export interface InitializeFormData {
   name?: string;
   description?: string;
   icon?: string;
-  category?: string;
+  tags?: string[];
+  section?: string;
   type?: HabitType;
   frequency?: FrequencyConfig;
   reminders?: Reminder[];
@@ -48,8 +50,10 @@ export interface AddHabitFormActions {
   setFormDescription: (description: string) => void;
   /** Установить иконку привычки */
   setFormIcon: (icon: string) => void;
-  /** Установить категорию привычки */
-  setFormCategory: (category: string) => void;
+  /** Установить теги привычки */
+  setFormTags: (tags: string[]) => void;
+  /** Установить раздел привычки */
+  setFormSection: (section: string) => void;
   /** Установить тип привычки */
   setFormType: (type: HabitType) => void;
   
@@ -83,7 +87,7 @@ export interface AddHabitFormActions {
   /** Установить текущий шаг */
   setFormCurrentStep: (step: 1 | 2 | 3) => void;
   /** Установить открытый picker */
-  setFormOpenPicker: (picker: 'unit' | 'targetType' | 'icon' | 'category' | 'type' | null) => void;
+  setFormOpenPicker: (openPicker: 'unit' | 'targetType' | 'icon' | 'tag' | 'section' | 'type' | null) => void;
   /** Установить текущую страницу иконок */
   setFormCurrentIconPage: (page: number) => void;
   
@@ -111,7 +115,8 @@ export interface AddHabitFormActions {
     name: string;
     description: string;
     icon: string;
-    category: string;
+    tags: string[];
+    section: string;
     type: HabitType;
     frequency: FrequencyConfig;
     reminders: Reminder[];
@@ -128,7 +133,8 @@ const getInitialFormState = () => ({
   name: '',
   description: '',
   icon: 'dumbbell',
-  category: '',
+  tags: [] as string[],
+  section: 'Другие',
   type: 'binary' as HabitType,
   frequency: {
     type: 'daily' as const,
@@ -160,32 +166,36 @@ export const createAddHabitFormSlice: StateCreator<
 > = (set, get) => ({
   // ==================== ИНИЦИАЛИЗАЦИЯ ====================
   initializeAddHabitForm: (initialData) => {
-    set((state) => ({
-      addHabitForm: {
-        name: initialData?.name || '',
-        description: initialData?.description || '',
-        icon: initialData?.icon || 'dumbbell',
-        category: initialData?.category || '',
-        type: initialData?.type || 'binary',
-        frequency: initialData?.frequency || {
-          type: 'daily',
-          count: 7,
-          period: 7,
-          daysOfWeek: [],
+    set((state) => {
+      const newState = {
+        addHabitForm: {
+          name: initialData?.name || '',
+          description: initialData?.description || '',
+          icon: initialData?.icon || 'dumbbell',
+          tags: initialData?.tags || [],
+          section: initialData?.section || 'Другие',
+          type: initialData?.type || 'binary',
+          frequency: initialData?.frequency || {
+            type: 'daily',
+            count: 7,
+            period: 7,
+            daysOfWeek: [],
+          },
+          frequencyBackup: null,
+          reminders: initialData?.reminders || [],
+          measurable: {
+            unit: initialData?.unit || '',
+            targetValue: initialData?.targetValue?.toString() || '',
+            targetType: initialData?.targetType || 'min',
+          },
+          currentStep: 1,
+          openPicker: null,
+          currentIconPage: 0,
+          isInitialized: true,
         },
-        frequencyBackup: null,
-        reminders: initialData?.reminders || [],
-        measurable: {
-          unit: initialData?.unit || '',
-          targetValue: initialData?.targetValue?.toString() || '',
-          targetType: initialData?.targetType || 'min',
-        },
-        currentStep: 1,
-        openPicker: null,
-        currentIconPage: 0,
-        isInitialized: true,
-      },
-    }));
+      };
+      return newState;
+    });
   },
 
   resetAddHabitForm: () => {
@@ -213,9 +223,15 @@ export const createAddHabitFormSlice: StateCreator<
     }));
   },
 
-  setFormCategory: (category) => {
+  setFormTags: (tags) => {
     set((state) => ({
-      addHabitForm: { ...state.addHabitForm, category },
+      addHabitForm: { ...state.addHabitForm, tags },
+    }));
+  },
+
+  setFormSection: (section) => {
+    set((state) => ({
+      addHabitForm: { ...state.addHabitForm, section },
     }));
   },
 
@@ -423,7 +439,8 @@ export const createAddHabitFormSlice: StateCreator<
       name: addHabitForm.name.trim(),
       description: addHabitForm.description.trim(),
       icon: addHabitForm.icon,
-      category: addHabitForm.category,
+      tags: addHabitForm.tags,
+      section: addHabitForm.section,
       type: addHabitForm.type,
       frequency: {
         ...addHabitForm.frequency,

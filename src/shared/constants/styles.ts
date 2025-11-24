@@ -148,11 +148,14 @@ export const Z_INDEX = {
   // Базовый слой модальных окон
   modal: 'z-50',
   
-  // Важные диалоги (ConfirmDialog, AddHabitModal)
-  dialog: 'z-[60]',
-  
   // Вложенные модальные окна (FrequencyModal внутри AddHabitModal)
-  nested: 'z-[70]',
+  nested: 'z-[60]',
+  
+  // Dropdown пикеры (теги, единицы измерения)
+  dropdown: 'z-[70]',
+  
+  // Важные диалоги (ConfirmDialog) - самый верхний слой
+  dialog: 'z-[80]',
   
   // Dev tools (самый верхний)
   dev: 'z-[100]',

@@ -5,15 +5,18 @@
  * - MonthYearPicker - выбор месяца/года
  * - ManageHabitsModal - управление привычками
  * - AddHabitModal - добавление новой привычки
+ * - NumericInputModal - ввод числового значения для измеримой привычки
  * 
  * @module core/modals/HabitTrackerModals
+ * @updated 23 ноября 2025 - миграция Category → Tag
  * @see /core/store/slices/modals.ts
  */
 
 import { MonthYearPicker } from '@/modules/habit-tracker/features/calendar';
-import { ManageHabitsModal, AddHabitModal } from '@/modules/habit-tracker/features/habits';
+import { ManageHabitsModal, AddHabitModal, NumericInputModal } from '@/modules/habit-tracker/features/habits';
 import { Habit } from '@/modules/habit-tracker/types';
-import { Category } from '@/modules/habit-tracker/features/categories';
+import { Tag } from '@/modules/habit-tracker/features/tags';
+import { declineUnit } from '@/shared/utils/text';
 
 interface HabitTrackerModalsProps {
   // Month/Year Picker
@@ -25,15 +28,22 @@ interface HabitTrackerModalsProps {
 
   // Manage Habits Modal
   isManageHabitsModalOpen: boolean;
-  categories: Category[];
+  tags: Tag[];
   onManageHabitsClose: () => void;
-  onManageHabitsSave: (habits: Habit[], categories: Category[]) => void;
+  onManageHabitsSave: (habits: Habit[], tags: Tag[]) => void;
 
   // Add Habit Modal
   isAddHabitModalOpen: boolean;
   onAddHabitClose: () => void;
   onAddHabit: (habitData: any) => void;
   daysInMonth: number;
+
+  // Numeric Input Modal
+  numericInputModal: { habitId: string; date: string } | null;
+  habits: Habit[];
+  onNumericInputClose: () => void;
+  onNumericInputSave: (habitId: string, date: string, value: number) => void;
+  onNumericInputSkip: (habitId: string, date: string) => void;
 }
 
 export function HabitTrackerModals({
@@ -43,14 +53,24 @@ export function HabitTrackerModals({
   onMonthYearSelect,
   onMonthYearClose,
   isManageHabitsModalOpen,
-  categories,
+  tags,
   onManageHabitsClose,
   onManageHabitsSave,
   isAddHabitModalOpen,
   onAddHabitClose,
   onAddHabit,
   daysInMonth,
+  numericInputModal,
+  habits,
+  onNumericInputClose,
+  onNumericInputSave,
+  onNumericInputSkip,
 }: HabitTrackerModalsProps) {
+  // Находим привычку для NumericInputModal
+  const numericHabit = numericInputModal
+    ? habits.find((h) => h.id === numericInputModal.habitId)
+    : null;
+
   return (
     <>
       {/* Month/Year Picker Dialog */}
@@ -79,6 +99,27 @@ export function HabitTrackerModals({
           onClose={onAddHabitClose}
           onAdd={onAddHabit}
           daysInMonth={daysInMonth}
+        />
+      )}
+
+      {/* Numeric Input Modal */}
+      {numericInputModal && numericHabit && (
+        <NumericInputModal
+          isOpen={true}
+          onClose={onNumericInputClose}
+          habitName={numericHabit.name}
+          date={numericInputModal.date}
+          currentValue={
+            typeof numericHabit.completions[numericInputModal.date] === 'number'
+              ? (numericHabit.completions[numericInputModal.date] as number)
+              : ''
+          }
+          unit={numericHabit.unit}
+          targetValue={numericHabit.targetValue}
+          targetType={numericHabit.targetType}
+          onSave={(value) => onNumericInputSave(numericInputModal.habitId, numericInputModal.date, value)}
+          onSkip={() => onNumericInputSkip(numericInputModal.habitId, numericInputModal.date)}
+          declineUnit={declineUnit}
         />
       )}
     </>

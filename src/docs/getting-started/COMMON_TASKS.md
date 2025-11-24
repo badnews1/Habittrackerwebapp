@@ -1,6 +1,6 @@
 # 🛠️ Типичные задачи: Пошаговые инструкции
 
-**Дата обновления:** 22 ноября 2025  
+**Дата обновления:** 23 ноября 2025
 
 ---
 
@@ -224,13 +224,13 @@ export const VALIDATION_MESSAGES = {
 
 ## 3. Добавить новую константу
 
-**Пример:** Добавить константу для максимального количества категорий
+**Пример:** Добавить константу для максимального количества тегов
 
 ### Шаг 1: Определить где хранить константу
 
 **Категории констант:**
 - **UI:** размеры, отступы, анимации → `/shared/constants/ui.ts`
-- **Цвета:** палитра, категории → `/shared/constants/colors.ts`
+- **Цвета:** палитра, теги → `/shared/constants/colors.ts`
 - **Валидация:** лимиты, правила → `/shared/constants/validation.ts`
 - **Стили:** классы, z-index → `/shared/constants/styles.ts`
 - **Иконки:** список иконок → `/shared/constants/icons.ts`
@@ -242,9 +242,9 @@ export const VALIDATION_MESSAGES = {
 
 ```typescript
 /**
- * Максимальное количество категорий
+ * Максимальное количество тегов
  */
-export const MAX_CATEGORIES = 20;
+export const MAX_TAGS = 20;
 ```
 
 ### Шаг 3: Экспортировать из index.ts (если есть)
@@ -254,26 +254,26 @@ export const MAX_CATEGORIES = 20;
 ```typescript
 export {
   MAX_HABIT_NAME_LENGTH,
-  MAX_CATEGORIES,  // ← ДОБАВИТЬ
+  MAX_TAGS,  // ← ДОБАВИТЬ
   // ... остальные
 } from './validation';
 ```
 
 ### Шаг 4: Использовать в коде
 
-📁 **Файл:** `/modules/habit-tracker/features/categories/components/AddCategoryButton.tsx`
+📁 **Файл:** `/shared/components/tag-picker/TagPicker.tsx`
 
 ```typescript
-import { MAX_CATEGORIES } from '@/shared/constants/validation';
+import { MAX_TAGS } from '@/shared/constants/validation';
 
-function AddCategoryButton() {
-  const categories = useHabitsStore((state) => state.categories);
+function TagPicker() {
+  const tags = useHabitsStore((state) => state.tags);
   
-  const canAddCategory = categories.length < MAX_CATEGORIES;
+  const canAddTag = tags.length < MAX_TAGS;
   
   return (
-    <button disabled={!canAddCategory}>
-      {canAddCategory ? 'Добавить категорию' : `Максимум ${MAX_CATEGORIES} категорий`}
+    <button disabled={!canAddTag}>
+      {canAddTag ? 'Добавить тег' : `Максимум ${MAX_TAGS} тегов`}
     </button>
   );
 }
@@ -295,10 +295,10 @@ function AddCategoryButton() {
 
 ### Шаг 1: Создать компонент модалки
 
-📁 **Файл:** `/components/modals/ExportDataModal.tsx`
+📁 **Файл:** `/shared/components/modals/ExportDataModal.tsx`
 
 ```typescript
-import { X } from 'lucide-react';
+import { X } from '@/shared/icons';
 import { MODAL_STYLES, MODAL_WIDTHS } from '@/shared/constants/styles';
 
 interface ExportDataModalProps {
@@ -408,14 +408,15 @@ export const initialState = {
 };
 ```
 
-### Шаг 5: Подключить в AppModals
+### Шаг 5: Подключить в HabitTrackerModals (или создать новый менеджер)
 
-📁 **Файл:** `/components/modals/AppModals.tsx`
+📁 **Файл:** `/core/modals/HabitTrackerModals.tsx`
 
 ```typescript
-import { ExportDataModal } from './ExportDataModal';
+import { ExportDataModal } from '@/shared/components/modals/ExportDataModal';
+import { useHabitsStore } from '@/core/store';
 
-export function AppModals() {
+export function HabitTrackerModals() {
   const isExportModalOpen = useHabitsStore((state) => state.isExportModalOpen);
   const closeExportModal = useHabitsStore((state) => state.closeExportModal);
   
@@ -423,6 +424,7 @@ export function AppModals() {
     <>
       {/* Существующие модалки */}
       <AddHabitModal />
+      <ManageHabitsModal />
       
       {/* Новая модалка */}
       <ExportDataModal
@@ -436,12 +438,12 @@ export function AppModals() {
 
 ### Шаг 6: Использовать в компоненте
 
-📁 **Файл:** `/components/layout/Navbar.tsx`
+📁 **Файл:** `/shared/components/layout/Sidebar.tsx`
 
 ```typescript
 import { useHabitsStore } from '@/core/store';
 
-function Navbar() {
+function Sidebar() {
   const openExportModal = useHabitsStore((state) => state.openExportModal);
   
   return (
@@ -559,7 +561,7 @@ function HabitRow({ habit }: { habit: Habit }) {
 ### 🏪 Core Store (Zustand)
 
 ```bash
-# Главная структура
+# лавная структура
 /core/store/index.ts         # Главный store с persist
 /core/store/types.ts         # HabitsState (полный интерфейс)
 /core/store/initialState.ts # Начальные значения и DEFAULT_CATEGORIES
@@ -582,7 +584,7 @@ function HabitRow({ habit }: { habit: Habit }) {
 /shared/utils/date/dateUtils.ts   # formatDate(), getDaysInMonth(), getDayName()
 
 # Константы
-/shared/constants/colors.ts       # CATEGORY_COLORS, STRENGTH_THRESHOLDS, UI_COLORS
+/shared/constants/colors.ts       # TAG_COLORS, STRENGTH_THRESHOLDS, UI_COLORS
 /shared/constants/validation.ts   # VALIDATION_RULES, MAX_HABIT_NAME_LENGTH
 /shared/constants/icons.ts        # AVAILABLE_ICONS
 /shared/constants/ui.ts           # UI_SIZES, Z_INDEX
@@ -612,7 +614,7 @@ function HabitRow({ habit }: { habit: Habit }) {
 /modules/habit-tracker/features/habits/          # CRUD привычек
 /modules/habit-tracker/features/strength/        # Система силы привычки (EMA)
 /modules/habit-tracker/features/frequency/       # Система частоты выполнения
-/modules/habit-tracker/features/categories/      # Категории привычек
+/modules/habit-tracker/features/tags/            # Теги привычек
 /modules/habit-tracker/features/calendar/        # Календарь и галочки
 /modules/habit-tracker/features/statistics/      # Прогресс и статистика
 /modules/habit-tracker/features/notifications/   # Напоминания
@@ -649,7 +651,7 @@ function HabitRow({ habit }: { habit: Habit }) {
 
 - [ ] Обновлены типы TypeScript?
 - [ ] Добавлены комментарии на русском?
-- [ ] Обновлена документация `/docs/FileStructure.md` (если нужно)?
+- [ ] Обновлена документация (README компонента, /docs/HISTORY.md)?
 - [ ] Проверена работа в UI?
 - [ ] Проверено сохранение в localStorage?
 - [ ] Проверена валидация?

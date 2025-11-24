@@ -744,7 +744,7 @@ if (visualLength > 25) {
 - `/shared/utils/date/dateUtils.ts` — formatDate(), getDaysInMonth(), getDayName()
 
 **Константы:**
-- `/shared/constants/colors.ts` — CATEGORY_COLORS, STRENGTH_THRESHOLDS, UI_COLORS
+- `/shared/constants/colors.ts` — TAG_COLORS, STRENGTH_THRESHOLDS, UI_COLORS
 - `/shared/constants/validation.ts` — VALIDATION_RULES, MAX_HABIT_NAME_LENGTH
 - `/shared/constants/icons.ts` — AVAILABLE_ICONS
 - `/shared/constants/ui.ts` — UI_SIZES, Z_INDEX

@@ -46,7 +46,7 @@ export interface CategoryActions<T extends BaseCategory> {
  * // В модуле привычек
  * const manager = useCategoriesManager(
  *   categories,
- *   CATEGORY_COLORS[0],
+ *   TAG_COLORS[0],
  *   (categoryName) => {
  *     // Очистить category у всех привычек
  *     habits.forEach(habit => {

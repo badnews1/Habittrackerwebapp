@@ -6,6 +6,7 @@
  * 
  * @module modules/habit-tracker/types
  * @created 22 ноября 2025
+ * @updated 23 ноября 2025 - миграция category → tag
  * @migrated из /types/habit.ts
  */
 
@@ -72,8 +73,10 @@ export interface Habit {
   checked?: boolean;
   /** Иконка привычки (emoji или название иконки) */
   icon?: string;
-  /** Категория привычки */
-  category?: string;
+  /** Теги привычки (множественный выбор) */
+  tags: string[];
+  /** Раздел привычки (Утро, День, Вечер, Другие или кастомный) */
+  section: string;
   /** Включены ли напоминания (legacy, для обратной совместимости) */
   reminderEnabled?: boolean;
   /** Время напоминания (legacy, для обратной совместимости) */
@@ -104,7 +107,8 @@ export interface HabitData {
   description: string;
   frequency: FrequencyConfig;
   icon: string;
-  category?: string;
+  tags?: string[];
+  section?: string;
   type: HabitType;
   unit?: string;
   targetValue?: number;

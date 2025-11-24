@@ -5,9 +5,10 @@
  * Разделение начального состояния улучшает читаемость.
  * 
  * @module core/store/initialState
+ * @updated 23 ноября 2025 - миграция categories → tags
  */
 
-import { initializeHabitCategories } from '@/modules/habit-tracker/features/categories';
+import { initializeHabitTags } from '@/modules/habit-tracker/features/tags';
 
 /**
  * Начальное состояние store (только данные, без actions)
@@ -15,7 +16,8 @@ import { initializeHabitCategories } from '@/modules/habit-tracker/features/cate
 export const getInitialState = () => ({
   // ==================== ДАННЫЕ ====================
   habits: [],
-  categories: initializeHabitCategories(),
+  tags: initializeHabitTags(),
+  sections: ['Другие', 'Утро', 'День', 'Вечер'],
   dailyGoals: {},
   defaultDailyGoal: '',
 
@@ -46,7 +48,8 @@ export const getInitialState = () => ({
     name: '',
     description: '',
     icon: 'dumbbell',
-    category: '',
+    tags: [],
+    section: 'Другие',
     type: 'binary',
     frequency: {
       type: 'daily',

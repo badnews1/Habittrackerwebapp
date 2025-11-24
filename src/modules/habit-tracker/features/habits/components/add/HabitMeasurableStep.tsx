@@ -53,7 +53,7 @@ export const HabitMeasurableStep: React.FC<HabitMeasurableStepProps> = ({
   onOpenPickerChange,
 }) => {
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-[400px]">
+    <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-[320px]">
       {/* Unit */}
       <div>
         <label className="text-xs text-gray-500 mb-1 block">

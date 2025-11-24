@@ -30,10 +30,10 @@ export const TEXT_LENGTH_LIMITS = {
     max: 200,
   },
   
-  /** Название категории */
-  categoryName: {
+  /** Название тега */
+  tagName: {
     min: 1,
-    max: 30,
+    max: 15,
   },
   
   /** Заметка к дню (если будет реализовано) */
@@ -105,8 +105,8 @@ export const VALIDATION_PATTERNS = {
   /** Название привычки (буквы, цифры, пробелы, основные знаки препинания) */
   habitName: /^[а-яА-ЯёЁa-zA-Z0-9\s\-.,!?]+$/,
   
-  /** Название категории (буквы, цифры, пробелы, дефис) */
-  categoryName: /^[а-яА-ЯёЁa-zA-Z0-9\s\-]+$/,
+  /** Название тега (буквы, цифры, пробелы, дефис) */
+  tagName: /^[а-яА-ЯёЁa-zA-Z0-9\s\-]+$/,
   
   /** Числовое значение с плавающей точкой */
   decimalNumber: /^\d+(\.\d{1,2})?$/,
@@ -139,11 +139,21 @@ export const VALIDATION_MESSAGES = {
   /** Ошибки для категорий */
   category: {
     nameRequired: 'Название категории обязательно',
-    nameTooShort: `Название должно содержать минимум ${TEXT_LENGTH_LIMITS.categoryName.min} символ`,
-    nameTooLong: `Название не должно превышать ${TEXT_LENGTH_LIMITS.categoryName.max} символов`,
+    nameTooShort: `Название должно содержать минимум ${TEXT_LENGTH_LIMITS.tagName.min} символ`,
+    nameTooLong: `Название не должно превышать ${TEXT_LENGTH_LIMITS.tagName.max} символов`,
     nameInvalid: 'Название содержит недопустимые символы',
     nameExists: 'Категория с таким названием уже существует',
     colorRequired: 'Выберите цвет для категории',
+  },
+  
+  /** Ошибки для тегов */
+  tag: {
+    nameRequired: 'Название тега обязательно',
+    nameTooShort: `Название должно содержать минимум ${TEXT_LENGTH_LIMITS.tagName.min} символ`,
+    nameTooLong: `Название не должно превышать ${TEXT_LENGTH_LIMITS.tagName.max} символов`,
+    nameInvalid: 'Название содержит недопустимые символы',
+    nameExists: 'Тег с таким названием уже существует',
+    colorRequired: 'Выберите цвет для тега',
   },
   
   /** Ошибки для числовых значений */
@@ -226,20 +236,55 @@ export function validateCategoryName(
     return { isValid: false, error: VALIDATION_MESSAGES.category.nameRequired };
   }
   
-  if (trimmedName.length < TEXT_LENGTH_LIMITS.categoryName.min) {
+  if (trimmedName.length < TEXT_LENGTH_LIMITS.tagName.min) {
     return { isValid: false, error: VALIDATION_MESSAGES.category.nameTooShort };
   }
   
-  if (trimmedName.length > TEXT_LENGTH_LIMITS.categoryName.max) {
+  if (trimmedName.length > TEXT_LENGTH_LIMITS.tagName.max) {
     return { isValid: false, error: VALIDATION_MESSAGES.category.nameTooLong };
   }
   
-  if (!VALIDATION_PATTERNS.categoryName.test(trimmedName)) {
+  if (!VALIDATION_PATTERNS.tagName.test(trimmedName)) {
     return { isValid: false, error: VALIDATION_MESSAGES.category.nameInvalid };
   }
   
   if (existingCategories.includes(trimmedName)) {
     return { isValid: false, error: VALIDATION_MESSAGES.category.nameExists };
+  }
+  
+  return { isValid: true };
+}
+
+/**
+ * Проверить название тега
+ * @param name - Название тега
+ * @param existingTags - Список существующих тегов
+ * @returns Объект с результатом { isValid: boolean, error?: string }
+ */
+export function validateTagName(
+  name: string,
+  existingTags: string[] = []
+): { isValid: boolean; error?: string } {
+  const trimmedName = name.trim();
+  
+  if (trimmedName.length === 0) {
+    return { isValid: false, error: VALIDATION_MESSAGES.tag.nameRequired };
+  }
+  
+  if (trimmedName.length < TEXT_LENGTH_LIMITS.tagName.min) {
+    return { isValid: false, error: VALIDATION_MESSAGES.tag.nameTooShort };
+  }
+  
+  if (trimmedName.length > TEXT_LENGTH_LIMITS.tagName.max) {
+    return { isValid: false, error: VALIDATION_MESSAGES.tag.nameTooLong };
+  }
+  
+  if (!VALIDATION_PATTERNS.tagName.test(trimmedName)) {
+    return { isValid: false, error: VALIDATION_MESSAGES.tag.nameInvalid };
+  }
+  
+  if (existingTags.includes(trimmedName)) {
+    return { isValid: false, error: VALIDATION_MESSAGES.tag.nameExists };
   }
   
   return { isValid: true };

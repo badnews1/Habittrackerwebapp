@@ -8,4 +8,5 @@ export {
   formatDate,
   getDayName,
   formatDateReadable,
+  formatDateFull,
 } from './dateUtils';

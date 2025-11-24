@@ -5,7 +5,7 @@
  * - Добавление, удаление, обновление
  * - Переключение выполнения (бинарные и измеримые)
  * - Drag-n-drop перемещение
- * - Массовые операции (toggleAllForDay, clearAllCompletions)
+ * - Массовые операции (clearAllCompletions)
  * - Система Undo для очистки всех галочек
  * 
  * @module core/store/slices/habits
@@ -31,7 +31,6 @@ export const createHabitsSlice: StateCreator<
     | 'deleteHabit'
     | 'updateHabit'
     | 'toggleCompletion'
-    | 'toggleAllForDay'
     | 'moveHabit'
     | 'clearAllCompletions'
     | 'undoClearAllCompletions'
@@ -46,7 +45,8 @@ export const createHabitsSlice: StateCreator<
       completions: {},
       frequency: habitData.frequency,
       icon: habitData.icon,
-      category: habitData.category,
+      tags: habitData.tags || [],
+      section: habitData.section || 'Другие',
       type: habitData.type,
       unit: habitData.unit,
       targetValue: habitData.targetValue,
@@ -145,63 +145,6 @@ export const createHabitsSlice: StateCreator<
     get().incrementActionCounter();
   },
 
-  toggleAllForDay: (date) => {
-    const state = get();
-    const habitsForDate = state.habits;
-
-    // Проверяем, все ли привычки выполнены в этот день
-    const allCompleted = habitsForDate.every((habit) => {
-      if (habit.type === 'binary') {
-        return habit.completions[date] === true;
-      } else if (habit.type === 'measurable') {
-        const value = habit.completions[date] as number | undefined;
-        if (value === undefined) return false;
-
-        if (habit.targetType === 'min') {
-          return value >= (habit.targetValue || 0);
-        } else {
-          return value <= (habit.targetValue || Infinity);
-        }
-      }
-      return false;
-    });
-
-    const updatedHabits = habitsForDate.map((habit) => {
-      const newCompletions = { ...habit.completions };
-      const newSkipped = { ...habit.skipped };
-
-      if (allCompleted) {
-        // Снимаем все галочки
-        if (habit.type === 'binary') {
-          delete newCompletions[date];
-          delete newSkipped[date];
-        } else if (habit.type === 'measurable') {
-          delete newCompletions[date];
-        }
-      } else {
-        // Ставим все галочки
-        if (habit.type === 'binary') {
-          newCompletions[date] = true;
-          delete newSkipped[date];
-        } else if (habit.type === 'measurable') {
-          // Для измеримых устанавливаем целевое значение
-          newCompletions[date] = habit.targetValue || 0;
-        }
-      }
-
-      const updatedHabit = {
-        ...habit,
-        completions: newCompletions,
-        skipped: newSkipped,
-      };
-
-      return recalculateStrength(updatedHabit);
-    });
-
-    set({ habits: updatedHabits });
-    get().incrementActionCounter();
-  },
-
   moveHabit: (dragIndex, hoverIndex) => {
     const state = get();
     const newHabits = [...state.habits];
@@ -241,7 +184,7 @@ export const createHabitsSlice: StateCreator<
     });
 
     set({ habits: clearedHabits });
-    habitLogger.info('Очищены все галочки месяца', { month: selectedMonth, year: selectedYear });
+    habitLogger.info('Очищены все галочки есяца', { month: selectedMonth, year: selectedYear });
   },
 
   undoClearAllCompletions: () => {

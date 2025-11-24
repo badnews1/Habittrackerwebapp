@@ -16,15 +16,16 @@ import React from 'react';
 import { Close } from '@/shared/icons';
 import { HabitsFilterDropdown } from '@/modules/habit-tracker/shared/components/filters';
 import type { Habit } from '../../types';
-import { Category } from '@/modules/habit-tracker/features/categories';
+import { Tag } from '@/modules/habit-tracker/features/tags';
 import { declineHabits } from '@/shared/utils/text';
 
 interface ManageHabitsHeaderProps {
+  // Display props
   habitsCount: number;
   onClose: () => void;
   // Filter props
   localHabits: Habit[];
-  localCategories: Category[];
+  localTags: Tag[];
   filterState: {
     selectedCategories: string[];
     selectedTypes: ('binary' | 'measurable')[];
@@ -47,7 +48,7 @@ export const ManageHabitsHeader: React.FC<ManageHabitsHeaderProps> = React.memo(
   habitsCount,
   onClose,
   localHabits,
-  localCategories,
+  localTags,
   filterState,
   filterActions,
   hasActiveFilters,
@@ -57,7 +58,7 @@ export const ManageHabitsHeader: React.FC<ManageHabitsHeaderProps> = React.memo(
   return (
     <div className="flex items-center justify-between p-6 border-b border-gray-200">
       <div>
-        <h4 className="text-gray-900">Управление ежедневными привычками</h4>
+        <h4 className="text-gray-900">Управление привычками</h4>
         <p className="text-sm text-gray-500 mt-1">
           {habitsCount} {declineHabits(habitsCount)}
         </p>
@@ -67,7 +68,7 @@ export const ManageHabitsHeader: React.FC<ManageHabitsHeaderProps> = React.memo(
         {/* Filter Dropdown */}
         <HabitsFilterDropdown
           habits={localHabits}
-          categories={localCategories}
+          tags={localTags}
           filterState={filterState}
           filterActions={filterActions}
           hasActiveFilters={hasActiveFilters}

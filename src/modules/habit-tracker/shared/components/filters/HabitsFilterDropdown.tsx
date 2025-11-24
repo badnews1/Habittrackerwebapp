@@ -2,24 +2,24 @@
  * HabitsFilterDropdown - dropdown компонент для фильтрации привычек
  * 
  * @description
- * Компактный dropdown UI для фильтрации привычек по категориям и типам.
+ * Компактный dropdown UI для фильтрации привычек по тегам, разделам и типам.
  * Используется в модалках, тулбарах и хедерах.
  * 
  * Особенности:
  * - Иконка фильтра с индикатором активных фильтров
- * - Dropdown панель с двумя секциями (категории + типы)
+ * - Dropdown панель с тремя секциями (теги + разделы + типы)
  * - Collapsible секции (аккордеон)
  * - Кнопка "Сбросить" для очистки фильтров
  * - Автозакрытие при клике вне области
  * - Логика фильтрации вынесена в useHabitsFilter хук
  * 
  * @since Ноябрь 2024
- * @updated 22 ноября 2025 - мигрирован в /modules/habit-tracker/shared/components
+ * @updated 24 ноября 2025 - добавлена фильтрация по разделам
  */
 
 import React, { useRef } from 'react';
 import { Habit } from '@/shared/types/habit';
-import { Category } from '@/shared/types/category';
+import { Tag } from '@/modules/habit-tracker/features/tags';
 import { HabitsFilterState, HabitsFilterActions } from '../../types/filters';
 import { Filter, ChevronUp, ChevronDown } from '@/shared/icons';
 import { useClickOutside } from '@/shared/hooks/use-click-outside';
@@ -27,8 +27,8 @@ import { useClickOutside } from '@/shared/hooks/use-click-outside';
 interface HabitsFilterDropdownProps {
   /** Массив привычек для отображения опций фильтра */
   habits: Habit[];
-  /** Массив категорий для отображения в фильтре */
-  categories: Category[];
+  /** Массив тегов для отображения в фильтре */
+  tags: Tag[];
   
   /** Состояние фильтров из useHabitsFilter */
   filterState: HabitsFilterState;
@@ -53,7 +53,7 @@ interface HabitsFilterDropdownProps {
  * 
  * <HabitsFilterDropdown
  *   habits={habits}
- *   categories={categories}
+ *   tags={tags}
  *   filterState={state}
  *   filterActions={actions}
  *   hasActiveFilters={result.hasActiveFilters}
@@ -64,7 +64,7 @@ interface HabitsFilterDropdownProps {
  */
 export function HabitsFilterDropdown({
   habits,
-  categories,
+  tags,
   filterState,
   filterActions,
   hasActiveFilters,
@@ -81,19 +81,34 @@ export function HabitsFilterDropdown({
   const {
     showUncategorized,
     selectedCategories,
+    selectedSections,
     selectedTypes,
     isCategoryExpanded,
+    isSectionExpanded,
     isTypeExpanded,
   } = filterState;
 
   const {
     toggleUncategorized,
     toggleCategory,
+    toggleSection,
     toggleType,
     clearAllFilters,
     toggleCategoryExpanded,
+    toggleSectionExpanded,
     toggleTypeExpanded,
   } = filterActions;
+
+  // Получаем уникальные разделы из привычек
+  const availableSections = React.useMemo(() => {
+    const sectionsSet = new Set<string>();
+    habits.forEach((habit) => {
+      if (habit.section) {
+        sectionsSet.add(habit.section);
+      }
+    });
+    return Array.from(sectionsSet).sort();
+  }, [habits]);
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -129,14 +144,14 @@ export function HabitsFilterDropdown({
             )}
           </div>
 
-          {/* Секция фильтрации по категориям */}
+          {/* Секция фильтрации по тегам */}
           <div>
             <button
               onClick={toggleCategoryExpanded}
               className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-gray-50 transition-colors"
             >
               <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Категории
+                Теги
               </span>
               {isCategoryExpanded ? (
                 <ChevronUp className="w-4 h-4 text-gray-400" />
@@ -147,8 +162,8 @@ export function HabitsFilterDropdown({
 
             {isCategoryExpanded && (
               <div className="py-2">
-                {/* Опция "Без категории" */}
-                {habits.some((h) => !h.category) && (
+                {/* Опция "Без тега" */}
+                {habits.some((h) => !h.tag) && (
                   <label className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
                     <input
                       type="checkbox"
@@ -156,29 +171,71 @@ export function HabitsFilterDropdown({
                       onChange={toggleUncategorized}
                       className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
                     />
-                    <span className="text-sm text-gray-700">Без категории</span>
+                    <span className="text-sm text-gray-700">Без тега</span>
                   </label>
                 )}
 
-                {/* Список категорий */}
-                {categories.length > 0 ? (
-                  categories.map((category) => (
+                {/* Список тегов */}
+                {tags.length > 0 ? (
+                  tags.map((tag) => (
                     <label
-                      key={category.name}
+                      key={tag.name}
                       className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer transition-colors"
                     >
                       <input
                         type="checkbox"
-                        checked={selectedCategories.has(category.name)}
-                        onChange={() => toggleCategory(category.name)}
+                        checked={selectedCategories.has(tag.name)}
+                        onChange={() => toggleCategory(tag.name)}
                         className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
                       />
-                      <span className="text-sm text-gray-700">{category.name}</span>
+                      <span className="text-sm text-gray-700">{tag.name}</span>
                     </label>
                   ))
                 ) : (
                   <div className="px-4 py-2 text-sm text-gray-400 text-center">
-                    Нет категорий для фильтрации
+                    Нет тегов для фильтрации
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Секция фильтрации по разделам */}
+          <div className="border-t border-gray-200">
+            <button
+              onClick={toggleSectionExpanded}
+              className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            >
+              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                Разделы
+              </span>
+              {isSectionExpanded ? (
+                <ChevronUp className="w-4 h-4 text-gray-400" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-gray-400" />
+              )}
+            </button>
+
+            {isSectionExpanded && (
+              <div className="py-2">
+                {availableSections.length > 0 ? (
+                  availableSections.map((section) => (
+                    <label
+                      key={section}
+                      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 cursor-pointer transition-colors"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedSections.has(section)}
+                        onChange={() => toggleSection(section)}
+                        className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900"
+                      />
+                      <span className="text-sm text-gray-700">{section}</span>
+                    </label>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 text-sm text-gray-400 text-center">
+                    Нет разделов для фильтрации
                   </div>
                 )}
               </div>

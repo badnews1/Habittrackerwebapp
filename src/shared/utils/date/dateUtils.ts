@@ -88,19 +88,35 @@ export const getDayName = (date: Date): string => {
 };
 
 /**
- * Форматирует дату в читаемый формат "Пн, 15 января"
+ * Форматирует дату из строки в читаемый формат с днем недели
  * 
- * @param dateStr - строка даты в формате YYYY-MM-DD
- * @returns форматированная строка
+ * @param dateStr - Дата в формате 'YYYY-MM-DD'
+ * @returns Строка в формате "День недели, День Месяц"
  * 
  * @example
- * ```typescript
- * const readable = formatDateReadable('2025-01-15');
- * // 'Ср, 15 января'
+ * ```ts
+ * formatDateReadable('2025-11-24') // "Пт, 24 ноября"
  * ```
  */
 export const formatDateReadable = (dateStr: string): string => {
   const [year, month, day] = dateStr.split('-');
   const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
   return `${DAY_NAMES_SHORT[dateObj.getDay()]}, ${parseInt(day)} ${MONTH_NAMES_GENITIVE[dateObj.getMonth()]}`;
+};
+
+/**
+ * Форматирует дату из строки в полный читаемый формат с годом
+ * 
+ * @param dateStr - Дата в формате 'YYYY-MM-DD'
+ * @returns Строка в формате "День Месяц Год"
+ * 
+ * @example
+ * ```ts
+ * formatDateFull('2025-11-24') // "24 ноября 2025"
+ * ```
+ */
+export const formatDateFull = (dateStr: string): string => {
+  const [year, month, day] = dateStr.split('-');
+  const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  return `${parseInt(day)} ${MONTH_NAMES_GENITIVE[dateObj.getMonth()]} ${year}`;
 };

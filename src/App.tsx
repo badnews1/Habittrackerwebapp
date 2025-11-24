@@ -23,7 +23,7 @@ import { getDaysInMonth, formatDate, getDayName } from '@/shared/utils/date';
 import { useHabitsStore } from '@/core/store';
 import { recalculateStrength } from '@/modules/habit-tracker/features/strength';
 import { Habit } from '@/modules/habit-tracker/types';
-import { Category } from '@/modules/habit-tracker/features/categories';
+import { Tag } from '@/modules/habit-tracker/features/tags';
 
 export default function App() {
   // ==================== ZUSTAND STORE ====================
@@ -31,7 +31,7 @@ export default function App() {
   const {
     // Данные
     habits,
-    categories,
+    tags,
     dailyGoals,
     defaultDailyGoal,
     
@@ -74,15 +74,14 @@ export default function App() {
     deleteHabit,
     updateHabit,
     toggleCompletion,
-    toggleAllForDay,
     moveHabit,
     clearAllCompletions,
     undoClearAllCompletions,
     
-    // Actions: Категории
-    addCategory,
-    deleteCategory,
-    updateCategoryColor,
+    // Actions: Теги
+    addTag,
+    deleteTag,
+    updateTagColor,
     
     // Actions: Цели
     setDailyGoals,
@@ -113,15 +112,23 @@ export default function App() {
     
     if (habit) {
       const newCompletions = { ...habit.completions };
+      const newSkipped = { ...habit.skipped };
+      
       newCompletions[date] = value;
+      
+      // Если привычка была заморожена на этот день, снимаем заморозку
+      if (newSkipped[date]) {
+        delete newSkipped[date];
+      }
       
       const updatedHabit = {
         ...habit,
         completions: newCompletions,
+        skipped: newSkipped,
       };
       
-      // Пересчитываем силу привычки
-      const habitWithStrength = recalculateStrength(updatedHabit);
+      // Пересчитываем силу привычки с передачей даты изменения
+      const habitWithStrength = recalculateStrength(updatedHabit, date);
       updateHabit(habitId, habitWithStrength);
     }
   };
@@ -149,8 +156,8 @@ export default function App() {
         skipped: newSkipped,
       };
       
-      // Пересчитываем силу привычки
-      const habitWithStrength = recalculateStrength(updatedHabit);
+      // Пересчитываем силу привычки с передачей даты изменения
+      const habitWithStrength = recalculateStrength(updatedHabit, date);
       updateHabit(habitId, habitWithStrength);
     }
   };
@@ -162,18 +169,9 @@ export default function App() {
   };
 
   // Обработчик сохранения из ManageHabitsModal
-  const handleManageHabitsSave = (updatedHabits: Habit[], updatedCategories: Category[]) => {
+  const handleManageHabitsSave = (updatedHabits: Habit[], updatedTags: Tag[]) => {
     // Привычки уже сохранены через store (saveManageHabitsChanges)
-    // Здесь обрабатываем только категории (пока не мигрированы в store)
-    
-    // Обновляем категории, если они изменились
-    const currentCategoriesStr = JSON.stringify(categories);
-    const updatedCategoriesStr = JSON.stringify(updatedCategories);
-    
-    if (currentCategoriesStr !== updatedCategoriesStr) {
-      // TODO: Когда categories будут в store, это можно будет удалить
-      // Пока categories еще в App.tsx state через store actions
-    }
+    // Теги тоже уже управляются через store
     
     closeManageHabitsModal();
   };
@@ -191,7 +189,6 @@ export default function App() {
 
   const habitActions: HabitActions = {
     onToggleCompletion: toggleCompletion,
-    onToggleAllForDay: toggleAllForDay,
     onMoveHabit: moveHabit,
     onUpdateHabit: updateHabit,
   };
@@ -256,12 +253,9 @@ export default function App() {
           onMonthYearSelect={handleMonthYearSelect}
           onMonthYearClose={closeMonthYearPicker}
           isManageHabitsModalOpen={isManageHabitsModalOpen}
-          categories={categories}
+          tags={tags}
           onManageHabitsClose={closeManageHabitsModal}
           onManageHabitsSave={handleManageHabitsSave}
-          onAddCategory={addCategory}
-          onDeleteCategory={deleteCategory}
-          onUpdateCategoryColor={updateCategoryColor}
           isAddHabitModalOpen={isAddHabitModalOpen}
           onAddHabitClose={closeAddHabitModal}
           onAddHabit={addHabit}

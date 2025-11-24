@@ -5,17 +5,20 @@
  * - Drag & drop для изменения порядка
  * - Inline редактирование названия
  * - Раскрывающаяся секция с настройками
- * - Все настройки привычки (категория, частота, напоминания, заметки)
- * - Бейджи с информацией о типе, категории и напоминаниях
+ * - Все настройки привычки (тег, частота, напоминания, заметки)
+ * - Бейджи с информацией о типе, теге и напоминаниях
  * 
  * @module modules/habit-tracker/features/habits/components/manage/HabitItem
  * @migrated 22 ноября 2025
+ * @updated 23 ноября 2025 - миграция category → tag
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { useShallow } from 'zustand/react/shallow';
 import { DragHandle, Close, ChevronDown, ChevronUp, Settings, Trash2, Bell, Hash, CheckSquare, Tag } from '@/shared/icons';
-import { HabitCategoryPicker } from '@/modules/habit-tracker/features/categories';
+import { HabitTagPicker } from '@/modules/habit-tracker/features/tags';
+import { SectionPicker } from '@/shared/components/section-picker';
 import { HabitNameEditor } from './HabitNameEditor';
 import { HabitMeasurableSettingsSection } from './HabitMeasurableSettingsSection';
 import { HabitFrequencySection } from './HabitFrequencySection';
@@ -23,7 +26,7 @@ import { HabitRemindersSection } from './HabitRemindersSection';
 import { IconPicker } from './IconPicker';
 import { NotesSection } from '../add/NotesSection';
 import type { Habit, HabitType, Reminder } from '../../types';
-import { Category, getCategoryColor } from '@/modules/habit-tracker/features/categories';
+import { Tag as TagType, getTagColor } from '@/modules/habit-tracker/features/tags';
 import { useHabitsStore } from '@/core/store';
 
 const ITEM_TYPE = 'HABIT_ITEM';
@@ -34,7 +37,8 @@ interface HabitItemProps {
   onUpdateName: (id: string, name: string) => void;
   onUpdateDescription: (id: string, description: string) => void;
   onUpdateIcon: (id: string, icon: string) => void;
-  onUpdateCategory: (id: string, category: string) => void;
+  onUpdateTags: (id: string, tags: string[]) => void;
+  onUpdateSection: (id: string, section: string) => void;
   onUpdateReminders: (id: string, reminders: Reminder[]) => void;
   onUpdateType: (id: string, type: HabitType) => void;
   onUpdateFrequency: (id: string, frequency: Habit['frequency']) => void;
@@ -53,7 +57,8 @@ export const HabitItem: React.FC<HabitItemProps> = ({
   onUpdateName,
   onUpdateDescription,
   onUpdateIcon,
-  onUpdateCategory,
+  onUpdateTags,
+  onUpdateSection,
   onUpdateReminders,
   onUpdateType,
   onUpdateFrequency,
@@ -65,8 +70,16 @@ export const HabitItem: React.FC<HabitItemProps> = ({
   monthYearKey,
   scrollContainerRef
 }) => {
-  // Получаем категории из store
-  const categories = useHabitsStore(state => state.categories);
+  // Получаем теги и разделы из store
+  const { tags, sections, habits, addSection, deleteSection } = useHabitsStore(
+    useShallow(state => ({
+      tags: state.tags,
+      sections: state.sections,
+      habits: state.habits,
+      addSection: state.addSection,
+      deleteSection: state.deleteSection,
+    }))
+  );
 
   // Calculate days in month from monthYearKey (format: "YYYY-MM")
   const getDaysInMonth = (monthYearKey: string): number => {
@@ -79,6 +92,8 @@ export const HabitItem: React.FC<HabitItemProps> = ({
   // Name editing state
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(habit?.name || '');
+  const [isTagPickerOpen, setIsTagPickerOpen] = useState(false);
+  const [isSectionPickerOpen, setIsSectionPickerOpen] = useState(false);
   
   // Refs
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -207,12 +222,19 @@ export const HabitItem: React.FC<HabitItemProps> = ({
                   )}
                 </span>
                 
-                {/* Category badge */}
-                {habit.category && (
-                  <span className={`flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border ${getCategoryColor(categories, habit.category)}`}>
-                    <Tag className="w-3 h-3" />
-                    {habit.category}
-                  </span>
+                {/* Tag badges */}
+                {habit.tags && habit.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {habit.tags.map(tagName => (
+                      <span 
+                        key={tagName}
+                        className={`flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border ${getTagColor(tags, tagName)}`}
+                      >
+                        <Tag className="w-3 h-3" />
+                        {tagName}
+                      </span>
+                    ))}
+                  </div>
                 )}
                 
                 {/* Reminder badge */}
@@ -261,11 +283,31 @@ export const HabitItem: React.FC<HabitItemProps> = ({
       {/* Expanded Details Section */}
       {isExpanded && (
         <div className="px-4 pb-4 pt-3 border-t border-gray-100">
-          {/* Category Picker */}
-          <HabitCategoryPicker
-            selectedCategory={habit.category}
-            onSelectCategory={(category) => onUpdateCategory(habit.id, category)}
-          />
+          {/* Section Picker */}
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Раздел</label>
+            <SectionPicker
+              selectedSection={habit.section || 'Другие'}
+              onSelectSection={(section) => onUpdateSection(habit.id, section)}
+              sections={sections}
+              onAddSection={addSection}
+              onDeleteSection={deleteSection}
+              getSectionUsageCount={(name) => habits.filter(h => h.section === name).length}
+              isOpen={isSectionPickerOpen}
+              onToggle={() => setIsSectionPickerOpen(!isSectionPickerOpen)}
+            />
+          </div>
+
+          {/* Tag Picker */}
+          <div className="mt-3">
+            <label className="text-xs text-gray-500 mb-1 block">Теги</label>
+            <HabitTagPicker
+              selectedTags={habit.tags || []}
+              onSelectTags={(tags) => onUpdateTags(habit.id, tags)}
+              isOpen={isTagPickerOpen}
+              onToggle={() => setIsTagPickerOpen(!isTagPickerOpen)}
+            />
+          </div>
 
           {/* Measurable Settings (only for measurable habits) */}
           {habit.type === 'measurable' && (

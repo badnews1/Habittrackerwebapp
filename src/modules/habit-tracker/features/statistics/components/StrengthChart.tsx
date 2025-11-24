@@ -121,8 +121,8 @@ export function StrengthChart({
           </div>
         </div>
         
-        <div style={{ width: 'calc(100% + 32px)', height: 230, marginLeft: '-16px' }}>
-          <ResponsiveContainer width="100%" height="100%">
+        <div style={{ width: 'calc(100% + 32px)', height: '230px', minHeight: '230px', minWidth: '200px', marginLeft: '-16px' }}>
+          <ResponsiveContainer width="100%" height={230} minHeight={230}>
             <AreaChart
               data={(() => {
                 const realData = monthDays.map((dayData) => {

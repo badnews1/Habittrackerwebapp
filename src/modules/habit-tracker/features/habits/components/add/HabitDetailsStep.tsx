@@ -59,7 +59,7 @@ export const HabitDetailsStep: React.FC<HabitDetailsStepProps> = ({
   onDescriptionChange,
 }) => {
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-[400px]">
+    <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-[320px]">
       {/* Frequency Button */}
       <FrequencyModalTrigger
         frequency={frequency}

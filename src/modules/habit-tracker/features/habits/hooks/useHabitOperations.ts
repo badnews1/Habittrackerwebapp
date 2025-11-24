@@ -26,8 +26,6 @@ interface HabitOperations {
   updateHabit: (habitId: string, updates: Partial<Habit>) => void;
   /** Переключить выполнение привычки (бинарная) или открыть модалку ввода (измеримая) */
   toggleCompletion: (habitId: string, date: string) => void;
-  /** Переключить все привычки на дату */
-  toggleAllForDay: (date: string) => void;
   /** Переместить привычку в списке (drag-n-drop) */
   moveHabit: (dragIndex: number, hoverIndex: number) => void;
   /** Очистить все выполнения за текущий месяц */
@@ -67,7 +65,6 @@ export function useHabitOperations(): HabitOperations {
       deleteHabit: state.deleteHabit,
       updateHabit: state.updateHabit,
       toggleCompletion: state.toggleCompletion,
-      toggleAllForDay: state.toggleAllForDay,
       moveHabit: state.moveHabit,
       clearAllCompletions: state.clearAllCompletions,
       undoClearAllCompletions: state.undoClearAllCompletions,
@@ -95,11 +92,6 @@ export function useHabitOperations(): HabitOperations {
     [operations.toggleCompletion]
   );
 
-  const toggleAllForDay = useCallback(
-    (date: string) => operations.toggleAllForDay(date),
-    [operations.toggleAllForDay]
-  );
-
   const moveHabit = useCallback(
     (dragIndex: number, hoverIndex: number) => operations.moveHabit(dragIndex, hoverIndex),
     [operations.moveHabit]
@@ -120,7 +112,6 @@ export function useHabitOperations(): HabitOperations {
     deleteHabit,
     updateHabit,
     toggleCompletion,
-    toggleAllForDay,
     moveHabit,
     clearAllCompletions,
     undoClearAllCompletions,

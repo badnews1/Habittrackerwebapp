@@ -22,7 +22,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { Modal } from '@/shared/constructors/modal';
 import { AddHabitModal } from './AddHabitModal';
 import type { Habit, HabitType, FrequencyConfig, Reminder, MeasurableSettings } from '../types';
-import { Category } from '@/modules/habit-tracker/features/categories';
+import { Tag } from '@/modules/habit-tracker/features/tags';
 import { ManageHabitsHeader, HabitsList, ManageHabitsFooter } from './manage';
 import { DeleteDialog } from './DeleteDialog';
 import { useHabitsFilter } from '@/modules/habit-tracker/shared/hooks/use-habits-filter';
@@ -31,7 +31,7 @@ import { useHabitsStore } from '@/core/store';
 interface ManageHabitsModalProps {
   habits: Habit[];
   onClose: () => void;
-  onSave: (habits: Habit[], categories: Category[]) => void;
+  onSave: (habits: Habit[], tags: Tag[]) => void;
   selectedMonth: number;
   selectedYear: number;
 }
@@ -48,7 +48,7 @@ export const ManageHabitsModal: React.FC<ManageHabitsModalProps> = ({
     localHabits,
     expandedHabitId,
     isInitialized,
-    categories,
+    tags,
     initializeManageHabitsModal,
     resetManageHabitsModal,
     updateLocalHabit,
@@ -65,7 +65,7 @@ export const ManageHabitsModal: React.FC<ManageHabitsModalProps> = ({
       localHabits: s.manageHabitsModal.localHabits,
       expandedHabitId: s.manageHabitsModal.expandedHabitId,
       isInitialized: s.manageHabitsModal.isInitialized,
-      categories: s.categories,
+      tags: s.tags,
       initializeManageHabitsModal: s.initializeManageHabitsModal,
       resetManageHabitsModal: s.resetManageHabitsModal,
       updateLocalHabit: s.updateLocalHabit,
@@ -117,12 +117,12 @@ export const ManageHabitsModal: React.FC<ManageHabitsModalProps> = ({
     // Сохраняем изменения в store (localHabits → habits)
     saveManageHabitsChanges();
     
-    // Также сохраняем категории через старый механизм (пока не мигрировали)
-    onSave([], categories); // Передаем пустой массив habits, т.к. они уже сохранены
+    // Также сохраняем теги через старый механизм (для обратной совместимости)
+    onSave([], tags); // Передаем пустой массив habits, т.к. они уже сохранены
     
     // Закрываем модалку
     closeManageHabitsModal();
-  }, [saveManageHabitsChanges, onSave, categories, closeManageHabitsModal]);
+  }, [saveManageHabitsChanges, onSave, tags, closeManageHabitsModal]);
 
   const handleCancel = React.useCallback(() => {
     // Отменяем изменения (сбрасываем localHabits)
@@ -153,8 +153,12 @@ export const ManageHabitsModal: React.FC<ManageHabitsModalProps> = ({
     updateLocalHabit(id, { icon });
   }, [updateLocalHabit]);
 
-  const handleUpdateCategory = React.useCallback((id: string, category: string) => {
-    updateLocalHabit(id, { category });
+  const handleUpdateTag = React.useCallback((id: string, tags: string[]) => {
+    updateLocalHabit(id, { tags });
+  }, [updateLocalHabit]);
+
+  const handleUpdateSection = React.useCallback((id: string, section: string) => {
+    updateLocalHabit(id, { section });
   }, [updateLocalHabit]);
 
   const handleUpdateReminders = React.useCallback((id: string, reminders: Reminder[]) => {
@@ -209,7 +213,7 @@ export const ManageHabitsModal: React.FC<ManageHabitsModalProps> = ({
             habitsCount={localHabits.length}
             onClose={handleCancel}
             localHabits={localHabits}
-            localCategories={categories}
+            localTags={tags}
             filterState={habitsFilter.state}
             filterActions={habitsFilter.actions}
             hasActiveFilters={habitsFilter.result.hasActiveFilters}
@@ -219,15 +223,14 @@ export const ManageHabitsModal: React.FC<ManageHabitsModalProps> = ({
 
           {/* Habits List */}
           <HabitsList
-            filteredHabits={habitsFilter.result.filteredHabits}
-            localHabits={localHabits}
+            habits={habitsFilter.result.filteredHabits}
             expandedHabitId={expandedHabitId}
-            scrollContainerRef={scrollContainerRef}
             monthYearKey={monthYearKey}
             onUpdateName={handleUpdateName}
             onUpdateDescription={handleUpdateDescription}
             onUpdateIcon={handleUpdateIcon}
-            onUpdateCategory={handleUpdateCategory}
+            onUpdateTag={handleUpdateTag}
+            onUpdateSection={handleUpdateSection}
             onUpdateReminders={handleUpdateReminders}
             onUpdateType={handleUpdateType}
             onUpdateFrequency={handleUpdateFrequency}

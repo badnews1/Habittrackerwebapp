@@ -3,16 +3,19 @@
  * 
  * Содержит поля:
  * - Иконка и название (обязательно)
- * - Категория
+ * - Тег
+ * - Раздел
  * - Тип отслеживания (бинарная/измеримая)
  * 
  * @module modules/habit-tracker/features/habits/components/add/HabitBasicInfoStep
  * @migrated 22 ноября 2025
+ * @updated 23 ноября 2025 - миграция category → tag
  */
 
 import React from 'react';
 import { DragHandle } from '@/shared/icons';
-import { HabitCategoryPicker } from '@/modules/habit-tracker/features/categories';
+import { HabitTagPicker } from '@/modules/habit-tracker/features/tags';
+import { SectionPicker } from '@/shared/components/section-picker';
 import { IconPicker } from '../manage/IconPicker';
 import { HabitTypePicker } from './HabitTypePicker';
 import { TEXT_LENGTH_LIMITS } from '@/shared/constants';
@@ -35,11 +38,29 @@ interface HabitBasicInfoStepProps {
   /** Колбэк изменения иконки */
   onIconChange: (icon: string) => void;
   
-  /** Выбранная категория */
-  category: string | undefined;
+  /** Выбранные теги */
+  tags: string[];
   
-  /** Колбэк изменения категории */
-  onCategoryChange: (category: string | undefined) => void;
+  /** Колбэк изменения тегов */
+  onTagsChange: (tags: string[]) => void;
+  
+  /** Выбранный раздел */
+  section: string;
+  
+  /** Колбэк изменения раздела */
+  onSectionChange: (section: string) => void;
+  
+  /** Список разделов из store */
+  sections: string[];
+  
+  /** Добавить раздел */
+  onAddSection: (name: string) => void;
+  
+  /** Удалить раздел */
+  onDeleteSection: (name: string) => void;
+  
+  /** Получить количество привычек в разделе */
+  getSectionUsageCount: (name: string) => number;
   
   /** Выбранный тип привычки */
   type: HabitType;
@@ -48,10 +69,10 @@ interface HabitBasicInfoStepProps {
   onTypeChange: (type: HabitType) => void;
   
   /** Открытый пикер */
-  openPicker: 'icon' | 'category' | 'type' | null;
+  openPicker: 'icon' | 'tag' | 'section' | 'type' | null;
   
   /** Колбэк изменения открытого пикера */
-  onOpenPickerChange: (picker: 'icon' | 'category' | 'type' | null) => void;
+  onOpenPickerChange: (picker: 'icon' | 'tag' | 'section' | 'type' | null) => void;
   
   /** Текущая страница иконок */
   currentIconPage: number;
@@ -66,8 +87,14 @@ export const HabitBasicInfoStep: React.FC<HabitBasicInfoStepProps> = ({
   onNameChange,
   icon,
   onIconChange,
-  category,
-  onCategoryChange,
+  tags,
+  onTagsChange,
+  section,
+  onSectionChange,
+  sections,
+  onAddSection,
+  onDeleteSection,
+  getSectionUsageCount,
   type,
   onTypeChange,
   openPicker,
@@ -76,7 +103,7 @@ export const HabitBasicInfoStep: React.FC<HabitBasicInfoStepProps> = ({
   onIconPageChange,
 }) => {
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-[400px]">
+    <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-[320px]">
       {/* Icon + Name */}
       <div>
         <label className="text-xs text-gray-500 mb-1 block">
@@ -112,14 +139,29 @@ export const HabitBasicInfoStep: React.FC<HabitBasicInfoStepProps> = ({
         </div>
       </div>
 
-      {/* Category */}
+      {/* Section */}
       <div>
-        <label className="text-xs text-gray-500 mb-1 block">Категория</label>
-        <HabitCategoryPicker
-          selectedCategory={category}
-          onSelectCategory={onCategoryChange}
-          isOpen={openPicker === 'category'}
-          onToggle={() => onOpenPickerChange(openPicker === 'category' ? null : 'category')}
+        <label className="text-xs text-gray-500 mb-1 block">Раздел</label>
+        <SectionPicker
+          selectedSection={section}
+          onSelectSection={onSectionChange}
+          sections={sections}
+          onAddSection={onAddSection}
+          onDeleteSection={onDeleteSection}
+          getSectionUsageCount={getSectionUsageCount}
+          isOpen={openPicker === 'section'}
+          onToggle={() => onOpenPickerChange(openPicker === 'section' ? null : 'section')}
+        />
+      </div>
+
+      {/* Tag */}
+      <div>
+        <label className="text-xs text-gray-500 mb-1 block">Теги</label>
+        <HabitTagPicker
+          selectedTags={tags}
+          onSelectTags={onTagsChange}
+          isOpen={openPicker === 'tag'}
+          onToggle={() => onOpenPickerChange(openPicker === 'tag' ? null : 'tag')}
         />
       </div>
 

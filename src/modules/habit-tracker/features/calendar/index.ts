@@ -11,3 +11,4 @@ export { CalendarHeader } from './components/CalendarHeader';
 export { CalendarDayHeader } from './components/CalendarDayHeader';
 export { CalendarGrid } from './components/CalendarGrid';
 export { MonthYearPicker } from './components/MonthYearPicker';
+export { CircularProgress } from './components/CircularProgress';

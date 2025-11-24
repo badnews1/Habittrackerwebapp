@@ -44,12 +44,15 @@ export const createInternalSlice: StateCreator<
     const updatedHabits = state.habits.map((habit) => {
       const lastUpdate = habit.lastStrengthUpdate ? new Date(habit.lastStrengthUpdate) : null;
 
+      // Миграция: добавляем дефолтный section если его нет
+      const migratedHabit = habit.section ? habit : { ...habit, section: 'Другие' };
+
       // Обновляем только если прошел хотя бы 1 день
       if (!lastUpdate || today.toDateString() !== lastUpdate.toDateString()) {
-        return recalculateStrength(habit);
+        return recalculateStrength(migratedHabit);
       }
 
-      return habit;
+      return migratedHabit;
     });
 
     set({ habits: updatedHabits });

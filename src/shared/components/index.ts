@@ -5,3 +5,4 @@ export * from './modals';
 export * from './popovers';
 export * from './reminders';
 export * from './notifications';
+export * from './tag-picker';

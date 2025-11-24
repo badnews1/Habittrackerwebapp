@@ -34,7 +34,7 @@ export const createManageHabitsModalSlice: StateCreator<
     | 'moveLocalHabit'
     | 'setExpandedHabitId'
     | 'getHabitsToSave'
-    | 'clearCategoryFromLocalHabits'
+    | 'clearTagFromLocalHabits'
     | 'saveManageHabitsChanges'
   >
 > = (set, get) => ({
@@ -150,17 +150,19 @@ export const createManageHabitsModalSlice: StateCreator<
     return state.manageHabitsModal.localHabits.filter((habit) => habit.name.trim() !== '');
   },
 
-  clearCategoryFromLocalHabits: (categoryName) => {
+  clearTagFromLocalHabits: (tagName) => {
     set((state) => ({
       manageHabitsModal: {
         ...state.manageHabitsModal,
         localHabits: state.manageHabitsModal.localHabits.map((habit) =>
-          habit.category === categoryName ? { ...habit, category: undefined } : habit
+          habit.tags?.includes(tagName)
+            ? { ...habit, tags: habit.tags.filter(t => t !== tagName) }
+            : habit
         ),
       },
     }));
 
-    categoryLogger.info('Очищена категория у локальных привычек', { name: categoryName });
+    categoryLogger.info('Очищен тег у локальных привычек', { name: tagName });
   },
 
   saveManageHabitsChanges: () => {
