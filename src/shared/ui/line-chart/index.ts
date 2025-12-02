@@ -1,8 +1,4 @@
-/**
- * Экспорт переиспользуемого компонента Line Chart
- * 
- * @module shared/ui/line-chart
- */
+/** Экспорт переиспользуемого компонента Line Chart */
 
 export { LineChart } from './LineChart';
 export type { LineChartProps, LineChartDataPoint } from './LineChart';

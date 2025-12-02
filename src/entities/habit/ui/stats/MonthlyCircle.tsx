@@ -14,9 +14,11 @@
  * @module entities/habit/ui/stats
  * @created 30 ноября 2025 - мигрировано из features/statistics
  * @refactored 1 декабря 2025 - использует CircularProgress из shared/ui
+ * @refactored 2 декабря 2025 - использует showLabel из CircularProgress
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Habit } from '../../model/types';
 import { isHabitCompletedForDate, getMonthlyGoalFromFrequency } from '../../lib/habit-utils';
 import { CircularProgress } from '@/shared/ui/circular-progress';
@@ -66,6 +68,8 @@ export function MonthlyCircle({
   selectedMonth,
   selectedYear,
 }: MonthlyCircleProps) {
+  const { t } = useTranslation('stats');
+  
   // Расчёт общего возможного количества выполнений и фактических выполнений
   const daysInMonth = monthDays.length;
   
@@ -94,16 +98,25 @@ export function MonthlyCircle({
   const safeTotalCompleted = isNaN(totalCompleted) ? 0 : totalCompleted;
   const safeTotalPossible = isNaN(totalPossible) ? 0 : totalPossible;
 
+  // Динамический расчёт ширины контейнера
+  // 28 дней = 283px, для 29-31 дней = 280px
+  const widthPx = monthDays.length === 28 ? 283 : 280;
+
   return (
     <div 
-      className={`flex-shrink-0 ${monthDays.length === 28 ? 'w-[283px] min-w-[283px] max-w-[283px]' : 'w-[280px] min-w-[280px] max-w-[280px]'}`} 
-      style={{ marginLeft: '17px' }}
+      className="flex-shrink-0"
+      style={{ 
+        width: `${widthPx}px`, 
+        minWidth: `${widthPx}px`, 
+        maxWidth: `${widthPx}px`,
+        marginLeft: '17px'
+      }}
     >
       <div className="flex items-center justify-center gap-4">
         {/* Левая текстовая секция */}
         <div className="flex flex-col items-start justify-center">
           <div className="uppercase tracking-wider" style={{ fontSize: '8px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-primary)' }}>
-            Habits
+            {t('stats.habits')}
           </div>
           <div style={{ fontSize: '14px', fontWeight: 400, lineHeight: 1, color: 'var(--text-secondary)' }}>
             {safeTotalCompleted}
@@ -112,24 +125,14 @@ export function MonthlyCircle({
           </div>
         </div>
         
-        {/* Круговая диаграмма */}
-        <div className="w-[100px] h-[100px] relative flex items-center justify-center">
-          <CircularProgress 
-            progress={safePercentage} 
-            size={100} 
-            strokeWidth={7}
-          />
-          
-          {/* Текст в центре круга */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div style={{ fontSize: '20px', fontWeight: 700, lineHeight: 1, color: 'var(--text-primary)' }}>
-              {Math.round(safePercentage)}%
-            </div>
-            <div className="uppercase tracking-wider" style={{ fontSize: '8px', fontWeight: 600, marginTop: '4px', color: 'var(--text-secondary)' }}>
-              Progress
-            </div>
-          </div>
-        </div>
+        {/* Круговая диаграмма с встроенным текстом */}
+        <CircularProgress 
+          progress={safePercentage} 
+          size={100} 
+          strokeWidth={7}
+          showLabel
+          label={t('stats.progress')}
+        />
       </div>
     </div>
   );

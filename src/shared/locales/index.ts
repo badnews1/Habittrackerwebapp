@@ -1,5 +1,5 @@
 /**
- * PUBLIC API для модуля локализации
+ * Public API для модуля локализации
  * 
  * Экспортируем файлы переводов для использования в конфигурации i18n
  */
@@ -12,7 +12,9 @@ export { default as statsEn } from './en/stats';
 export { default as appEn } from './en/app';
 export { default as uiEn } from './en/ui';
 export { default as tagsEn } from './en/tags';
-export { default as debugEn } from './en/debug';
+export { default as sectionsEn } from './en/sections';
+export { default as unitsEn } from './en/units';
+export { default as iconsEn } from './en/icons';
 
 // Русские переводы
 export { default as commonRu } from './ru/common';
@@ -22,4 +24,6 @@ export { default as statsRu } from './ru/stats';
 export { default as appRu } from './ru/app';
 export { default as uiRu } from './ru/ui';
 export { default as tagsRu } from './ru/tags';
-export { default as debugRu } from './ru/debug';
+export { default as sectionsRu } from './ru/sections';
+export { default as unitsRu } from './ru/units';
+export { default as iconsRu } from './ru/icons';

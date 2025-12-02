@@ -33,11 +33,8 @@ interface DailyProgressBarsProps {
  * - Количество пропущенных (freeze) привычек
  * - Процент выполнения = (выполненные / (общие - пропущенные)) * 100
  * 
- * Адаптивные отступы в зависимости от количества дней в месяце:
- * - 28 дней: gap-[7px]
- * - 29 дней: gap-[6px]
- * - 30 дней: gap-[5px]
- * - 31 день: gap-1
+ * Адаптивные отступы (динамический расчёт):
+ * - Gap между днями: 7px для 28 дней, уменьшается на 1px за каждый дополнительный день
  * 
  * @example
  * ```tsx
@@ -53,8 +50,13 @@ export function DailyProgressBars({
   habits,
   formatDate,
 }: DailyProgressBarsProps) {
+  // Динамический расчёт gap между днями
+  // Базовое значение 7px для 28 дней, уменьшается на 1px за каждый дополнительный день
+  // Результаты: 28 дней = 7px, 29 дней = 6px, 30 дней = 5px, 31 день = 4px
+  const gapPx = 7 - (monthDays.length - 28);
+
   return (
-    <div className={`flex ${monthDays.length === 28 ? 'gap-[7px]' : monthDays.length === 29 ? 'gap-[6px]' : monthDays.length === 30 ? 'gap-[5px]' : 'gap-1'}`} style={{ marginLeft: '17px' }}>
+    <div className="flex" style={{ gap: `${gapPx}px`, marginLeft: '17px' }}>
       {monthDays.map((dayData) => {
         const dateStr = formatDate(dayData.date);
         const totalHabits = habits.length;

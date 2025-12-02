@@ -92,7 +92,7 @@ export const TagPickerTrigger = forwardRef<HTMLButtonElement, TagPickerTriggerPr
       return (
         <Badge
           key={`${tag.name}-${index}`}
-          variant={tag.color as any}
+          variant={tag.color}
           className="flex-shrink-0"
         >
           <Tag className="w-3 h-3" />

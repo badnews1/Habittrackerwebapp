@@ -1,19 +1,20 @@
 /**
- * PUBLIC API для модуля date utilities
+ * Public API для модуля date utilities
  */
+
+// Утилиты для работы с датами
 export {
   getDaysInMonth,
   formatDate,
-  getDayName,
-  formatDateReadable,
-  formatDateFull,
-  DAY_NAMES_SHORT,
-  MONTH_NAMES_GENITIVE,
 } from './dateUtils';
 
+// Локализованные функции для отображения
 export {
   getLocalizedDayName,
   getLocalizedDayNameFull,
   getLocalizedMonthNameShort,
   getLocalizedMonthNameFull,
+  getLocalizedMonthNameGenitive,
+  formatDateReadable,
+  formatDateFull,
 } from './i18n';

@@ -1,7 +1,4 @@
-/**
- * 🎯 ToggleChip - экспорт
- * @module shared/ui/toggle-chip
- */
+/** ToggleChip - экспорт */
 
 export { ToggleChip } from './ToggleChip';
 export type { ToggleChipProps } from './ToggleChip';

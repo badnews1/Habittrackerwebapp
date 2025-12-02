@@ -57,7 +57,7 @@ export const ReminderList: React.FC<ReminderListProps> = ({
   onAddReminder,
   className = '',
 }) => {
-  const { t } = useTranslation(['habits', 'common']);
+  const { t } = useTranslation(['habits', 'common', 'ui']);
   
   const enabledReminders = reminders.filter(r => r.enabled);
   const enabledCount = enabledReminders.length;
@@ -75,7 +75,7 @@ export const ReminderList: React.FC<ReminderListProps> = ({
               variant={reminder.enabled ? 'default' : 'outline'}
               size="icon"
               className={reminder.enabled ? '' : 'hover:border-border-focus'}
-              title={reminder.enabled ? t('common:ui.disableReminder') : t('common:ui.enableReminder')}
+              title={reminder.enabled ? t('ui:disableReminder') : t('ui:enableReminder')}
             >
               {reminder.enabled ? (
                 <Bell className="w-4 h-4" />
@@ -91,7 +91,7 @@ export const ReminderList: React.FC<ReminderListProps> = ({
               value={reminder.time}
               onChange={(e) => onUpdateReminderTime(reminder.id, e.target.value)}
               className="flex-1"
-              aria-label={t('common:ui.reminderTime')}
+              aria-label={t('ui:reminderTime')}
             />
 
             {/* Кнопка удаления */}
@@ -100,7 +100,7 @@ export const ReminderList: React.FC<ReminderListProps> = ({
               variant="ghost"
               size="icon"
               className="text-text-tertiary hover:text-destructive"
-              title={t('common:ui.deleteReminder')}
+              title={t('ui:deleteReminder')}
             >
               <XIcon className="w-4 h-4" />
             </Button>

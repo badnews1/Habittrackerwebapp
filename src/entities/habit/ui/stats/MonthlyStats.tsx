@@ -13,6 +13,7 @@
  * @created 30 ноября 2025 - мигрировано из features/statistics
  * @refactored 1 декабря 2025 - использует CircularProgress из shared/ui, адаптация к темной теме
  * @refactored 2 декабря 2025 - убраны padding, заголовок и кнопка, чистый entity компонент
+ * @refactored 2 декабря 2025 - использует showLabel из CircularProgress, удален хардкод текста
  */
 
 import React from 'react';
@@ -81,24 +82,14 @@ export function MonthlyStats({
 
   return (
     <div className="flex items-center justify-start gap-4">
-      {/* Круговая диаграмма */}
-      <div className="w-[100px] h-[100px] relative flex items-center justify-center">
-        <CircularProgress 
-          progress={safePercentage} 
-          size={100} 
-          strokeWidth={7}
-        />
-        
-        {/* Текст в центре круга */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div style={{ fontSize: '20px', fontWeight: 700, lineHeight: 1, color: 'var(--text-primary)' }}>
-            {Math.round(safePercentage)}%
-          </div>
-          <div className="uppercase tracking-wider" style={{ fontSize: '8px', fontWeight: 600, marginTop: '4px', color: 'var(--text-secondary)' }}>
-            {t('stats.progress')}
-          </div>
-        </div>
-      </div>
+      {/* Круговая диаграмма с встроенным текстом */}
+      <CircularProgress 
+        progress={safePercentage} 
+        size={100} 
+        strokeWidth={7}
+        showLabel
+        label={t('stats.progress')}
+      />
       
       {/* Текстовая секция справа */}
       <div className="inline-flex flex-col items-start justify-center" style={{ height: '100px' }}>

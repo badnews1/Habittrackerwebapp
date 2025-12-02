@@ -1,5 +1,5 @@
-import { Languages } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Languages } from '@/shared/assets/icons/system';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '../model';
 import { useTranslation } from 'react-i18next';

@@ -11,7 +11,7 @@
  * ✅ Меньше кода (используем Radix Popover вместо кастомного Dropdown)
  * ✅ Автоматическое позиционирование (collision detection)
  * ✅ Лучшая accessibility (ARIA из Radix)
- * ✅ Поиск по названию иконки (live search)
+ * ✅ Поиск по названию иконки (live search) - работает на ОБОИХ языках (EN + RU)
  * ✅ Скролл вместо пагинации (UX улучшение)
  * ✅ 4 ряда видимых (как в ColorPicker): max-h-[152px]
  * ✅ Controlled состояние для интеграции
@@ -57,7 +57,7 @@ import {
 } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ICON_MAP, ICON_OPTIONS, SmallFilledCircle } from '@/shared/constants/icons';
+import { ICON_MAP, getIconOptions, SmallFilledCircle } from '@/shared/constants/icons';
 import { Search } from '@/shared/assets/icons/system';
 import type { IconPickerProps } from './IconPicker.types';
 
@@ -77,6 +77,13 @@ export function IconPicker({
   // ============================================
   // STATE
   // ============================================
+  
+  // Получаем переведенные опции иконок для текущего языка
+  const iconOptions = useMemo(() => getIconOptions(t), [t]);
+  
+  // Получаем переводы для ОБОИХ языков для поиска
+  const iconOptionsEn = useMemo(() => getIconOptions((key) => t(key, { lng: 'en' })), [t]);
+  const iconOptionsRu = useMemo(() => getIconOptions((key) => t(key, { lng: 'ru' })), [t]);
   
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -105,18 +112,22 @@ export function IconPicker({
   // COMPUTED
   // ============================================
 
-  // Фильтрация иконок по поисковому запросу
+  // Фильтрация иконок по поисковому запросу (ищем по ОБОИМ языкам)
   const filteredIcons = useMemo(() => {
     if (!searchQuery.trim()) {
-      return ICON_OPTIONS;
+      return iconOptions;
     }
     
     const query = searchQuery.toLowerCase();
-    return ICON_OPTIONS.filter(icon =>
-      icon.label.toLowerCase().includes(query) ||
-      icon.key.toLowerCase().includes(query)
-    );
-  }, [searchQuery]);
+    return iconOptions.filter((icon, index) => {
+      const labelEn = iconOptionsEn[index].label.toLowerCase();
+      const labelRu = iconOptionsRu[index].label.toLowerCase();
+      
+      return labelEn.includes(query) ||
+             labelRu.includes(query) ||
+             icon.key.toLowerCase().includes(query);
+    });
+  }, [searchQuery, iconOptions, iconOptionsEn, iconOptionsRu]);
 
   // Получение компонента выбранной иконки
   const SelectedIconComponent = ICON_MAP[value] || SmallFilledCircle;

@@ -7,10 +7,12 @@
  * @created 22 ноября 2025
  * @updated 30 ноября 2025 - переименование из notifications в habit-notifications
  * @updated 30 ноября 2025 - переименование файла в scheduler.ts
+ * @updated 2 декабря 2025 - миграция на i18n для локализованных уведомлений
  */
 
 import { NotificationScheduler } from '@/shared/lib/notifications';
 import type { Habit, Reminder } from '@/entities/habit';
+import i18n from '@/app/i18n';
 
 /**
  * Планирование всех напоминаний для привычки
@@ -60,12 +62,18 @@ export function scheduleHabitReminders(habit: Habit): void {
 export function scheduleHabitReminder(habit: Habit, reminder: Reminder): void {
   const reminderId = generateReminderId(habit.id, reminder.time);
   
+  // Локализованный текст уведомления
+  const body = i18n.t('common:notifications.scheduler.habitReminder', { 
+    habitName: habit.name,
+    defaultValue: `Time to complete habit: ${habit.name}`
+  });
+  
   NotificationScheduler.register({
     id: reminderId,
     type: 'habit',
     time: reminder.time,
     title: habit.name,
-    body: `Время выполнить привычку: ${habit.name}`,
+    body,
     icon: habit.icon,
     priority: 'normal',
     data: {

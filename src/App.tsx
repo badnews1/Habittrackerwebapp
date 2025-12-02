@@ -32,6 +32,9 @@ import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 
 export default function App() {
+  // ==================== I18N ====================
+  const { t } = useTranslation('common');
+
   // ==================== THEME ====================
   // Инициализация темы из localStorage
   useTheme();
@@ -169,7 +172,7 @@ export default function App() {
     selectedYear,
     monthDays,
     formatDate,
-    getDayName: getLocalizedDayName, // Используем локализованную версию
+    getDayName: (date: Date) => getLocalizedDayName(date, t), // Wrapper с передачей t
   };
 
   // ==================== RENDER ====================

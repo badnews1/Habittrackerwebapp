@@ -4,26 +4,20 @@
  * Компонент отображает прогресс в виде кругового индикатора.
  * Заполняется по часовой стрелке, начиная сверху.
  * 
- * ОСНОВНЫЕ ВОЗМОЖНОСТИ:
- * ✅ Универсальный - подходит для любых модулей (habit-tracker, finance, tasks и т.д.)
- * ✅ Настраиваемый размер
- * ✅ Плавная анимация transition-all
- * ✅ Автоматическое ограничение прогресса 0-100%
- * ✅ Минималистичный дизайн (Jony Ive style)
+ * ВОЗМОЖНОСТИ:
+ * ✅ Базовый режим - только круговая диаграмма
+ * ✅ Режим с лейблом - процент или кастомный текст внутри круга
+ * ✅ Кастомные цвета для прогресса и фона
  * 
  * @example
- * ```tsx
- * import { CircularProgress } from '@/shared/ui/circular-progress';
- * 
  * // Базовое использование
- * <CircularProgress progress={75} />
+ * <CircularProgress progress={75} size={20} />
  * 
- * // С кастомным размером
- * <CircularProgress progress={50} size={24} />
- * ```
+ * // С процентом внутри
+ * <CircularProgress progress={75} size={120} showLabel />
  * 
- * @module shared/ui/circular-progress
- * @created 29 ноября 2025
+ * // С кастомным текстом
+ * <CircularProgress progress={2} size={120} label="PROGRESS" />
  */
 
 import React from 'react';
@@ -36,7 +30,11 @@ export function CircularProgress({
   progress, 
   size = 16,
   strokeWidth = 2,
-  className = ''
+  className = '',
+  showLabel = false,
+  label,
+  progressColor = 'var(--text-primary)',
+  backgroundColor = 'var(--border-default)',
 }: CircularProgressProps) {
   // Ограничиваем прогресс от 0 до 100
   const clampedProgress = Math.max(0, Math.min(100, progress));
@@ -48,36 +46,76 @@ export function CircularProgress({
   // Вычисляем offset для stroke-dasharray (начинаем с верхней точки)
   const offset = circumference - (clampedProgress / 100) * circumference;
   
+  // Размер шрифта для процента (20% от размера круга)
+  const percentageFontSize = size * 0.2;
+  // Размер шрифта для лейбла (8% от размера круга)
+  const labelFontSize = size * 0.08;
+  
   return (
-    <svg
-      width={size}
-      height={size}
-      className={`transform -rotate-90 ${className}`}
-    >
-      {/* Фоновый круг */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="var(--border-default)"
-        strokeWidth={strokeWidth}
-      />
+    <div className={`relative inline-block ${className}`} style={{ width: size, height: size }}>
+      {/* SVG с кругом */}
+      <svg
+        width={size}
+        height={size}
+        className="transform -rotate-90 absolute inset-0"
+      >
+        {/* Фоновый круг */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={backgroundColor}
+          strokeWidth={strokeWidth}
+        />
+        
+        {/* Прогресс круг */}
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={progressColor}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="transition-all duration-300"
+        />
+      </svg>
       
-      {/* Прогресс круг */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="var(--text-primary)"
-        strokeWidth={strokeWidth}
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        className="transition-all duration-300"
-      />
-    </svg>
+      {/* Текст внутри круга */}
+      {showLabel && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          {/* Процент */}
+          <div 
+            style={{ 
+              fontSize: `${percentageFontSize}px`,
+              fontWeight: 700,
+              lineHeight: 1,
+              color: 'var(--text-primary)',
+            }}
+          >
+            {Math.round(clampedProgress)}%
+          </div>
+          
+          {/* Дополнительный лейбл под процентом */}
+          {label && (
+            <div 
+              className="uppercase tracking-wider"
+              style={{ 
+                fontSize: `${labelFontSize}px`,
+                fontWeight: 600,
+                marginTop: '4px',
+                color: 'var(--text-secondary)',
+              }}
+            >
+              {label}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 

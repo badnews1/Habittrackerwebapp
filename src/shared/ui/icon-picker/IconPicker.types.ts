@@ -1,31 +1,21 @@
 /**
- * 🎯 IconPicker Types — Типы для пикера иконок
- * 
- * @module shared/ui/icon-picker
- * @created 29 ноября 2025
+ * IconPicker Types — Типы для пикера иконок
  */
 
 import type { ReactNode } from 'react';
 
-/**
- * Props для компонента IconPicker
- */
+/** Props для компонента IconPicker */
 export interface IconPickerProps {
   /** Ключ выбранной иконки */
   value: string;
-  
   /** Callback при выборе иконки */
   onChange: (iconKey: string) => void;
-  
   /** Controlled состояние открытия */
   open?: boolean;
-  
   /** Callback изменения состояния открытия */
   onOpenChange?: (open: boolean) => void;
-  
-  /** Кастомный триггер (опционально) */
+  /** Кастомный триггер */
   children?: ReactNode;
-  
-  /** Дополнительный CSS класс */
+  /** CSS класс */
   className?: string;
 }

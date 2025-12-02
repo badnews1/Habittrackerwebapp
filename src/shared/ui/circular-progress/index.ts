@@ -1,8 +1,4 @@
-/**
- * CircularProgress - универсальная круговая диаграмма прогресса
- * 
- * @module shared/ui/circular-progress
- */
+/** CircularProgress - универсальная круговая диаграмма прогресса */
 
 export { CircularProgress } from './CircularProgress';
 export type { CircularProgressProps } from './CircularProgress.types';

@@ -11,6 +11,7 @@
  * ✅ Использует Popover (Radix) для позиционирования
  * ✅ Поиск по разделам для быстрого доступа
  * ✅ Фиксированная высота списка
+ * ✅ Не зависит от entities (FSD-совместимый)
  * 
  * @example
  * ```tsx
@@ -22,16 +23,18 @@
  *   onDeleteSection={(name) => setSections(sections.filter(s => s !== name))}
  *   canDelete={(section) => section !== 'Другие'}
  *   getUsageCount={(section) => habits.filter(h => h.section === section).length}
+ *   renderSectionName={(name) => t(`sections:${name}`)}
  * />
  * ```
  * 
  * @module shared/ui/section-picker
  * @created 28 ноября 2025
+ * @updated 2 декабря 2025 - удалена зависимость от entities (FSD fix)
  */
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Plus, X, AlertCircle, Search, Trash2 } from 'lucide-react';
+import { ChevronDown, Plus, X, AlertCircle, Search, Trash2 } from '@/shared/assets/icons/system';
 import {
   Popover,
   PopoverContent,
@@ -54,7 +57,6 @@ import { TEXT_LENGTH_LIMITS } from '@/shared/constants';
 import type { ColorVariant } from '@/shared/constants/colors';
 import { cn } from '@/components/ui/utils';
 import type { SectionPickerProps } from './SectionPicker.types';
-import { useTranslatedSectionName } from '@/entities/section';
 
 /**
  * Универсальный пикер разделов
@@ -75,10 +77,15 @@ export function SectionPicker({
   maxLength = TEXT_LENGTH_LIMITS.tagName.max,
   open,
   onOpenChange,
+  renderSectionName,
 }: SectionPickerProps) {
   const { t } = useTranslation('ui');
   const { t: tCommon } = useTranslation('common');
-  const getTranslatedSectionName = useTranslatedSectionName();
+  
+  // Функция для отображения имени раздела (переданная или дефолтная)
+  const displaySectionName = (name: string) => {
+    return renderSectionName ? renderSectionName(name) : name;
+  };
   
   // Локальное состояние для поиска
   const [search, setSearch] = useState('');
@@ -189,7 +196,7 @@ export function SectionPicker({
               !selectedSection && 'text-text-tertiary'
             )}
           >
-            {selectedSection ? getTranslatedSectionName(selectedSection) : placeholder}
+            {selectedSection ? displaySectionName(selectedSection) : placeholder}
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -238,7 +245,7 @@ export function SectionPicker({
                               className="w-3 h-3 rounded-sm flex-shrink-0"
                               style={{ backgroundColor: `var(--palette-${section.color}-bg)` }}
                             />
-                            <span className="flex-1">{getTranslatedSectionName(section.name)}</span>
+                            <span className="flex-1">{displaySectionName(section.name)}</span>
                           </div>
                           
                           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -363,7 +370,7 @@ export function SectionPicker({
               {deletingSection && (
                 formatDeleteMessage 
                   ? formatDeleteMessage(deletingSection.name, deletingSection.usageCount)
-                  : `${t('ui.deleteSection')} "${getTranslatedSectionName(deletingSection.name)}"?`
+                  : `${t('ui.deleteSection')} "${displaySectionName(deletingSection.name)}"?`
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>

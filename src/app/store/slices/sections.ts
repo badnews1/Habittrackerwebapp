@@ -13,6 +13,7 @@
 import { StateCreator } from 'zustand';
 import { HabitsState } from '../types';
 import type { Section } from '@/entities/habit';
+import { DEFAULT_SECTION, DEFAULT_SECTIONS_WITH_COLORS } from '@/entities/habit';
 import type { ColorVariant } from '@/shared/constants/colors';
 
 export interface SectionsSlice {
@@ -71,14 +72,28 @@ export const createSectionsSlice: StateCreator<
   /**
    * Удалить раздел
    * 
-   * - Защита: нельзя удалить "other"
+   * - Защита: нельзя удалить дефолтные разделы (other, morning, day, evening)
+   * - Защита: нельзя удалить последний раздел
    * - Все привычки из этого раздела переносятся в "other"
    */
   deleteSection: (name: string) => {
     set((state) => {
-      // Защита от удаления "other"
-      if (name === DEFAULT_SECTION) {
-        console.warn('[Sections] Нельзя удалить раздел "other"');
+      // Защита от удаления дефолтных разделов
+      const defaultSectionNames = DEFAULT_SECTIONS_WITH_COLORS.map(s => s.name);
+      if (defaultSectionNames.includes(name)) {
+        console.warn(`[Sections] Нельзя удалить дефолтный раздел "${name}"`);
+        return state;
+      }
+      
+      // Защита от удаления последнего раздела
+      if (state.sections.length <= 1) {
+        console.warn('[Sections] Нельзя удалить последний раздел');
+        return state;
+      }
+      
+      // Проверка: раздел существует
+      if (!state.sections.some(s => s.name === name)) {
+        console.warn(`[Sections] Раздел "${name}" не найден`);
         return state;
       }
       
@@ -86,7 +101,7 @@ export const createSectionsSlice: StateCreator<
         // Удалить раздел из списка
         sections: state.sections.filter(s => s.name !== name),
         
-        // Переместить все привычки из этого раздела в "other"
+        // Переместить все привычки из этого раздела в DEFAULT_SECTION
         habits: state.habits.map(h => 
           h.section === name ? { ...h, section: DEFAULT_SECTION } : h
         ),

@@ -40,7 +40,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, ChevronDown, Search } from 'lucide-react';
+import { Check, ChevronDown, Search } from '@/shared/assets/icons/system';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {

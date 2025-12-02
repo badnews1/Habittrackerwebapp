@@ -1,9 +1,3 @@
-/**
- * Calendar Day Header - Public API
- * 
- * Переиспользуемый компонент шапки календаря
- * 
- * @module shared/ui/calendar-day-header
- */
+/** Calendar Day Header - переиспользуемый компонент шапки календаря */
 
 export { CalendarDayHeader } from './CalendarDayHeader';

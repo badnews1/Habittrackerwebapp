@@ -50,69 +50,76 @@ export default {
     timesPerMonth_one: "time per month",
     timesPerMonth_other: "times per month",
     
-    // Единицы измерения
-    unit_разы_one: "time",
-    unit_разы_other: "times",
+    // Единицы измерения (ключи соответствуют UNIT_DEFINITIONS из @/shared/constants/units)
+    // Counting units
+    unit_times_one: "time",
+    unit_times_other: "times",
     
-    unit_штуки_one: "piece",
-    unit_штуки_other: "pieces",
+    unit_pieces_one: "piece",
+    unit_pieces_other: "pieces",
     
-    unit_баллы_one: "point",
-    unit_баллы_other: "points",
+    unit_points_one: "point",
+    unit_points_other: "points",
     
-    unit_минуты_one: "minute",
-    unit_минуты_other: "minutes",
+    unit_sets_one: "set",
+    unit_sets_other: "sets",
     
-    unit_часы_one: "hour",
-    unit_часы_other: "hours",
+    unit_tasks_one: "task",
+    unit_tasks_other: "tasks",
     
-    unit_шаги_one: "step",
-    unit_шаги_other: "steps",
+    // Time units
+    unit_minutes_one: "minute",
+    unit_minutes_other: "minutes",
     
-    unit_километры_one: "kilometer",
-    unit_километры_other: "kilometers",
+    unit_hours_one: "hour",
+    unit_hours_other: "hours",
     
-    unit_метры_one: "meter",
-    unit_метры_other: "meters",
+    // Distance units
+    unit_steps_one: "step",
+    unit_steps_other: "steps",
     
-    unit_подходы_one: "set",
-    unit_подходы_other: "sets",
+    unit_kilometers_one: "kilometer",
+    unit_kilometers_other: "kilometers",
     
-    unit_калории_one: "calorie",
-    unit_калории_other: "calories",
+    unit_meters_one: "meter",
+    unit_meters_other: "meters",
     
-    unit_килограммы_one: "kilogram",
-    unit_килограммы_other: "kilograms",
+    // Weight units
+    unit_kilograms_one: "kilogram",
+    unit_kilograms_other: "kilograms",
     
-    unit_граммы_one: "gram",
-    unit_граммы_other: "grams",
+    unit_grams_one: "gram",
+    unit_grams_other: "grams",
     
-    unit_стаканы_one: "glass",
-    unit_стаканы_other: "glasses",
+    // Volume units
+    unit_glasses_one: "glass",
+    unit_glasses_other: "glasses",
     
-    unit_литры_one: "liter",
-    unit_литры_other: "liters",
+    unit_liters_one: "liter",
+    unit_liters_other: "liters",
     
-    unit_милилитры_one: "milliliter",
-    unit_милилитры_other: "milliliters",
+    unit_milliliters_one: "milliliter",
+    unit_milliliters_other: "milliliters",
     
-    unit_порции_one: "serving",
-    unit_порции_other: "servings",
+    unit_portions_one: "serving",
+    unit_portions_other: "servings",
     
-    unit_чашки_one: "cup",
-    unit_чашки_other: "cups",
+    unit_cups_one: "cup",
+    unit_cups_other: "cups",
     
-    unit_страницы_one: "page",
-    unit_страницы_other: "pages",
+    // Calorie units
+    unit_calories_one: "calorie",
+    unit_calories_other: "calories",
     
-    unit_слова_one: "word",
-    unit_слова_other: "words",
+    // Reading units
+    unit_pages_one: "page",
+    unit_pages_other: "pages",
     
-    unit_главы_one: "chapter",
-    unit_главы_other: "chapters",
+    unit_words_one: "word",
+    unit_words_other: "words",
     
-    unit_задачи_one: "task",
-    unit_задачи_other: "tasks",
+    unit_chapters_one: "chapter",
+    unit_chapters_other: "chapters",
   },
   
   weekdays: {
@@ -173,6 +180,20 @@ export default {
       october: "October",
       november: "November",
       december: "December"
+    },
+    genitive: {
+      january: "January",
+      february: "February",
+      march: "March",
+      april: "April",
+      may: "May",
+      june: "June",
+      july: "July",
+      august: "August",
+      september: "September",
+      october: "October",
+      november: "November",
+      december: "December"
     }
   },
   
@@ -198,6 +219,25 @@ export default {
     },
     granted: "Notifications enabled",
     denied: "Notifications blocked",
-    default: "Notifications not configured"
+    default: "Notifications not configured",
+    
+    // Планировщик уведомлений
+    scheduler: {
+      // Типы напоминаний
+      types: {
+        habit: "Habits",
+        task: "Tasks",
+        finance: "Finance",
+        event: "Events",
+        other: "Other"
+      },
+      
+      // Групповое уведомление
+      groupedTitle_one: "You have {{count}} task for this time",
+      groupedTitle_other: "You have {{count}} tasks for this time",
+      
+      // Уведомление о привычке
+      habitReminder: "Time to complete habit: {{habitName}}"
+    }
   }
 } as const;

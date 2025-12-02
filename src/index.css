@@ -558,18 +558,6 @@
     z-index: 20;
   }
 
-  .z-50 {
-    z-index: 50;
-  }
-
-  .z-\[60\] {
-    z-index: 60;
-  }
-
-  .z-\[70\] {
-    z-index: 70;
-  }
-
   .z-\[80\] {
     z-index: 80;
   }
@@ -850,10 +838,6 @@
     height: 86px;
   }
 
-  .h-\[100px\] {
-    height: 100px;
-  }
-
   .h-\[119px\] {
     height: 119px;
   }
@@ -1008,10 +992,6 @@
 
   .w-\[50px\] {
     width: 50px;
-  }
-
-  .w-\[100px\] {
-    width: 100px;
   }
 
   .w-\[141px\] {
@@ -1357,18 +1337,6 @@
 
   .gap-\[1px\] {
     gap: 1px;
-  }
-
-  .gap-\[5px\] {
-    gap: 5px;
-  }
-
-  .gap-\[6px\] {
-    gap: 6px;
-  }
-
-  .gap-\[7px\] {
-    gap: 7px;
   }
 
   :where(.space-y-0 > :not(:last-child)) {
@@ -1892,22 +1860,6 @@
 
   .px-8 {
     padding-inline: calc(var(--spacing) * 8);
-  }
-
-  .px-\[16\.5px\] {
-    padding-inline: 16.5px;
-  }
-
-  .px-\[17\.5px\] {
-    padding-inline: 17.5px;
-  }
-
-  .px-\[17px\] {
-    padding-inline: 17px;
-  }
-
-  .px-\[18px\] {
-    padding-inline: 18px;
   }
 
   .\!py-2 {
@@ -3254,6 +3206,12 @@
   --widget-max-width: 400px;
   --widget-gap: var(--spacing-4);
   --widget-padding: var(--spacing-4);
+  --z-base: 0;
+  --z-dropdown: 50;
+  --z-popover: 60;
+  --z-modal: 50;
+  --z-modal-nested: 60;
+  --z-toast: 100;
   --font-size-base: 16px;
   --text-xs: clamp(.688rem, .65rem + .19vw, .75rem);
   --text-sm: clamp(.813rem, .77rem + .21vw, .875rem);

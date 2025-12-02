@@ -266,7 +266,7 @@ export function TagPicker<T extends BaseTag = BaseTag>({
                 <ToggleChip
                   key={tag.name}
                   label={displayName}
-                  variant={tag.color as any}
+                  variant={tag.color}
                   pressed={isSelected}
                   onPressedChange={() => handleToggleTag(tag.name)}
                   onDelete={() => handleDeleteTag(tag.name)}

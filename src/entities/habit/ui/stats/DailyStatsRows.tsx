@@ -33,29 +33,21 @@ export function DailyStatsRows({
   monthDays,
   formatDate,
 }: DailyStatsRowsProps) {
-  // Адаптивный gap в зависимости от количества дней в месяце
-  const gapClass = monthDays.length === 28 
-    ? 'gap-[7px]' 
-    : monthDays.length === 29 
-    ? 'gap-[6px]' 
-    : monthDays.length === 30 
-    ? 'gap-[5px]' 
-    : 'gap-1';
-
-  // Padding для выравнивания с реальными точками графика (пропуск фиктивных точек)
+  // Динамический расчёт padding для выравнивания с реальными точками графика
   // Синхронизировано с CalendarDayHeader
-  const paddingStyle = monthDays.length === 28 
-    ? 'px-[18px]' // скорректировано для точного выравнивания
-    : monthDays.length === 29 
-    ? 'px-[17.5px]' 
-    : monthDays.length === 30 
-    ? 'px-[17px]' 
-    : 'px-[16.5px]';
+  // Базовое значение 20px для 28 дней, уменьшается на 0.5px за каждый дополнительный день
+  // Результаты: 28 дней = 20px, 29 дней = 19.5px, 30 дней = 19px, 31 день = 18.5px
+  const paddingPx = 20 - (monthDays.length - 28) * 0.5;
+  
+  // Динамический расчёт gap между днями
+  // Базовое значение 7px для 28 дней, уменьшается на 1px за каждый дополнительный день
+  // Результаты: 28 дней = 7px, 29 дней = 6px, 30 дней = 5px, 31 день = 4px
+  const gapPx = 7 - (monthDays.length - 28);
 
   return (
-    <div className={`flex flex-col gap-1 ${paddingStyle}`}>
+    <div className="flex flex-col gap-1" style={{ paddingLeft: `${paddingPx}px`, paddingRight: `${paddingPx}px` }}>
       {/* Строка 1: Процент выполнения за каждый день */}
-      <div className={`flex ${gapClass}`}>
+      <div className="flex" style={{ gap: `${gapPx}px` }}>
         {monthDays.map((dayData, dayIndex) => {
           const dateStr = formatDate(dayData.date);
           const totalHabits = habits.length;
@@ -77,7 +69,7 @@ export function DailyStatsRows({
       </div>
 
       {/* Строка 2: Количество выполненных привычек */}
-      <div className={`flex ${gapClass}`}>
+      <div className="flex" style={{ gap: `${gapPx}px` }}>
         {monthDays.map((dayData, dayIndex) => {
           const dateStr = formatDate(dayData.date);
           const completedHabits = habits.filter(habit => isHabitCompletedForDate(habit, dateStr)).length;
@@ -95,7 +87,7 @@ export function DailyStatsRows({
       </div>
 
       {/* Строка 3: Общее количество привычек (с учётом пропусков) */}
-      <div className={`flex ${gapClass}`}>
+      <div className="flex" style={{ gap: `${gapPx}px` }}>
         {monthDays.map((dayData, dayIndex) => {
           const dateStr = formatDate(dayData.date);
           const totalHabits = habits.length;

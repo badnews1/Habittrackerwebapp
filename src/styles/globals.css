@@ -32,6 +32,14 @@
   --widget-gap: var(--spacing-4);      /* 16px */
   --widget-padding: var(--spacing-4);  /* 16px */
   
+  /* ===== Z-Index Scale (для управления слоями UI) ===== */
+  --z-base: 0;           /* Базовый слой (обычные элементы) */
+  --z-dropdown: 50;      /* Dropdown меню, Select, Tooltip, Context Menu */
+  --z-popover: 60;       /* Popover (выше чем dropdown) */
+  --z-modal: 50;         /* Модальные окна (Dialog, Sheet, Drawer) */
+  --z-modal-nested: 60;  /* Вложенные модальные окна */
+  --z-toast: 100;        /* Уведомления (самый верхний слой) */
+  
   /* ===== Responsive Typography Scale (clamp для плавного масштабирования) ===== */
   /* Формула: clamp(мин, предпочитаемый (responsive), макс) */
   --font-size-base: 16px;  /* Базовый размер для расчетов */

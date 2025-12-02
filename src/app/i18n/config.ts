@@ -1,27 +1,29 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-// Импорт переводов
-import commonEn from '@/shared/locales/en/common';
-import commonRu from '@/shared/locales/ru/common';
-import habitsEn from '@/shared/locales/en/habits';
-import habitsRu from '@/shared/locales/ru/habits';
-import validationEn from '@/shared/locales/en/validation';
-import validationRu from '@/shared/locales/ru/validation';
-import statsEn from '@/shared/locales/en/stats';
-import statsRu from '@/shared/locales/ru/stats';
-import appEn from '@/shared/locales/en/app';
-import appRu from '@/shared/locales/ru/app';
-import uiEn from '@/shared/locales/en/ui';
-import uiRu from '@/shared/locales/ru/ui';
-import tagsEn from '@/shared/locales/en/tags';
-import tagsRu from '@/shared/locales/ru/tags';
-import sectionsEn from '@/shared/locales/en/sections';
-import sectionsRu from '@/shared/locales/ru/sections';
-import debugEn from '@/shared/locales/en/debug';
-import debugRu from '@/shared/locales/ru/debug';
-import unitsEn from '@/shared/locales/en/units';
-import unitsRu from '@/shared/locales/ru/units';
+// Импорт переводов через Public API (barrel export)
+import {
+  commonEn,
+  habitsEn,
+  validationEn,
+  statsEn,
+  appEn,
+  uiEn,
+  tagsEn,
+  sectionsEn,
+  unitsEn,
+  iconsEn,
+  commonRu,
+  habitsRu,
+  validationRu,
+  statsRu,
+  appRu,
+  uiRu,
+  tagsRu,
+  sectionsRu,
+  unitsRu,
+  iconsRu,
+} from '@/shared/locales';
 
 /**
  * Конфигурация i18next для мультиязычности приложения
@@ -29,6 +31,18 @@ import unitsRu from '@/shared/locales/ru/units';
  * Поддерживаемые языки:
  * - en (English) - по умолчанию
  * - ru (Русский)
+ * 
+ * Namespaces:
+ * - common: Общие переводы (кнопки, действия, plurals для единиц)
+ * - habits: Переводы связанные с привычками
+ * - validation: Сообщения валидации форм
+ * - stats: Статистика и аналитика
+ * - app: Общие элементы приложения (навигация, заголовки)
+ * - ui: UI компоненты
+ * - tags: Теги и метки
+ * - sections: Секции и разделы
+ * - units: Единицы измерения и их категории
+ * - icons: Названия иконок
  */
 i18n
   .use(initReactI18next) // Интеграция с React
@@ -43,8 +57,8 @@ i18n
         ui: uiEn,
         tags: tagsEn,
         sections: sectionsEn,
-        debug: debugEn,
         units: unitsEn,
+        icons: iconsEn,
       },
       ru: {
         common: commonRu,
@@ -55,13 +69,13 @@ i18n
         ui: uiRu,
         tags: tagsRu,
         sections: sectionsRu,
-        debug: debugRu,
         units: unitsRu,
+        icons: iconsRu,
       },
     },
     lng: 'en', // Язык по умолчанию
     fallbackLng: 'en', // Fallback язык, если перевод не найден
-    ns: ['common', 'habits', 'validation', 'stats', 'app', 'ui', 'tags', 'sections', 'debug', 'units'], // Namespaces
+    ns: ['common', 'habits', 'validation', 'stats', 'app', 'ui', 'tags', 'sections', 'units', 'icons'], // Namespaces
     defaultNS: 'common', // Namespace по умолчанию
     
     interpolation: {

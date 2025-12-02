@@ -1,8 +1,5 @@
 /**
- * 🎯 IconPicker — Экспорт компонента выбора иконки
- * 
- * @module shared/ui/icon-picker
- * @created 29 ноября 2025
+ * IconPicker — Экспорт компонента выбора иконки
  */
 
 export { IconPicker } from './IconPicker';

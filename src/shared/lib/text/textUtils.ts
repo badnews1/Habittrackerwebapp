@@ -7,13 +7,10 @@
  * - Склонения единиц измерения
  * - Форматирования чисел
  * - Получения сокращённых названий единиц
- * 
- * @since 21 ноября 2025 (объединение declineWords.ts и unitUtils.ts)
- * @updated 30 ноября 2025 - мигрировано в /shared/lib согласно FSD
- * @updated 2 декабря 2025 - полная миграция на i18n с поддержкой EN/RU
  */
 
 import type { TFunction } from 'i18next';
+import { createUnitToKeyMap } from '@/shared/constants/units';
 
 // ============================================
 // БАЗОВАЯ ФУНКЦИЯ СКЛОНЕНИЯ ДЛЯ РУССКОГО ЯЗЫКА
@@ -275,95 +272,30 @@ export function declineTimesPerMonth(count: number | undefined, t: TFunction, ln
   }
 }
 
-/**
- * Склонение фразы "раз в" для составных фраз
- * Используется в составе "N раз в M дней"
- * 
- * @param count - количество раз
- * @param t - функция перевода
- * @param lng - язык
- * @returns "раз в" / "раза в" / "times in"
- * 
- * @deprecated Функция не используется в текущей реализации
- */
-export function declineTimesIn(count: number | undefined, t: TFunction, lng: string = 'ru'): string {
-  if (count === undefined || count === null || isNaN(count)) {
-    count = 0;
-  }
-
-  const absCount = Math.floor(Math.abs(count));
-
-  if (lng === 'ru') {
-    const form = getPluralFormRu(absCount);
-    // Для русского: "раз в", "раза в", "раз в"
-    const forms = {
-      one: 'раз в',
-      few: 'раза в',
-      many: 'раз в',
-    };
-    // ✅ Fix: доступ по ключу может вернуть undefined
-    return forms[form] ?? 'раз в';
-  } else {
-    // Для английского: просто "times in" или "time in"
-    const form = getPluralFormEn(absCount);
-    return form === 'one' ? 'time in' : 'times in';
-  }
-}
-
 // ============================================
 // ЕДИНИЦЫ ИЗМЕРЕНИЯ
 // ============================================
 
 /**
- * Маппинг единиц измерения на ключи для склонений
- * Поддерживает как русские, так и английские названия единиц
+ * Кэш для маппинга единиц (оптимизация)
+ * Создаётся один раз для каждого языка чтобы не пересоздавать при каждом вызове
  */
-const UNIT_TO_KEY_MAP: Record<string, string> = {
-  // Русские варианты
-  'разы': 'times',
-  'штуки': 'pieces',
-  'баллы': 'points',
-  'подходы': 'sets',
-  'задачи': 'tasks',
-  'минуты': 'minutes',
-  'часы': 'hours',
-  'шаги': 'steps',
-  'километры': 'kilometers',
-  'метры': 'meters',
-  'килограммы': 'kilograms',
-  'граммы': 'grams',
-  'стаканы': 'glasses',
-  'литры': 'liters',
-  'милилитры': 'milliliters',
-  'порции': 'portions',
-  'чашки': 'cups',
-  'калории': 'calories',
-  'страницы': 'pages',
-  'слова': 'words',
-  'главы': 'chapters',
-  // Английские варианты
-  'times': 'times',
-  'pieces': 'pieces',
-  'points': 'points',
-  'sets': 'sets',
-  'tasks': 'tasks',
-  'minutes': 'minutes',
-  'hours': 'hours',
-  'steps': 'steps',
-  'kilometers': 'kilometers',
-  'meters': 'meters',
-  'kilograms': 'kilograms',
-  'grams': 'grams',
-  'glasses': 'glasses',
-  'liters': 'liters',
-  'milliliters': 'milliliters',
-  'portions': 'portions',
-  'cups': 'cups',
-  'calories': 'calories',
-  'pages': 'pages',
-  'words': 'words',
-  'chapters': 'chapters',
-};
+let cachedUnitMapRu: Record<string, string> | null = null;
+let cachedUnitMapEn: Record<string, string> | null = null;
+
+/**
+ * Очистить кэш маппингов единиц
+ * 
+ * Используется при смене языка приложения чтобы пересоздать маппинги.
+ * Обычно не требуется вызывать вручную, так как функция i18next.changeLanguage()
+ * перезагружает переводы автоматически.
+ * 
+ * @internal
+ */
+export function clearUnitMappingCache(): void {
+  cachedUnitMapRu = null;
+  cachedUnitMapEn = null;
+}
 
 /**
  * Склонение единиц измерения в зависимости от числа (i18n)
@@ -386,8 +318,23 @@ export function declineUnit(value: number, unit: string, t: TFunction, lng: stri
     return unit;
   }
 
-  // Получаем универсальный ключ для единицы
-  const unitKey = UNIT_TO_KEY_MAP[unit] || unit;
+  // Получаем кэшированный маппинг или создаём новый для текущего языка
+  let unitToKeyMap: Record<string, string>;
+  
+  if (lng === 'ru') {
+    if (!cachedUnitMapRu) {
+      cachedUnitMapRu = createUnitToKeyMap(t);
+    }
+    unitToKeyMap = cachedUnitMapRu;
+  } else {
+    if (!cachedUnitMapEn) {
+      cachedUnitMapEn = createUnitToKeyMap(t);
+    }
+    unitToKeyMap = cachedUnitMapEn;
+  }
+
+  // Получаем универсальный ключ для единицы (конвертируем локализованное значение в ключ)
+  const unitKey = unitToKeyMap[unit] || unit;
 
   const absValue = Math.floor(Math.abs(value));
 

@@ -17,7 +17,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from '@/shared/ui/modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { formatDateFull } from '@/shared/lib/date';
 import { Eraser, Pause, Check } from '@/shared/assets/icons/system';
 import { useTranslation } from 'react-i18next';
 import { declineUnit as declineUnitFn } from '@/shared/lib/text';

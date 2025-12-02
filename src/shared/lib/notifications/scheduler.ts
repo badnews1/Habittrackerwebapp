@@ -3,10 +3,6 @@
  * 
  * Координирует уведомления от всех модулей (habits, tasks, finance) и 
  * предотвращает спам, группируя уведомления на одно и то же время.
- * 
- * @module shared/lib/notifications
- * @created 22 ноября 2025
- * @updated 30 ноября 2025 - миграция из shared/services в shared/lib согласно FSD
  */
 
 import { NotificationService } from './notification-api';
@@ -16,6 +12,7 @@ import type {
   SchedulerStats,
   ReminderType 
 } from './types';
+import i18n from '@/app/i18n';
 
 /**
  * Класс централизованного планировщика уведомлений
@@ -250,17 +247,9 @@ class NotificationSchedulerClass {
         other: '🔔'
       };
       
-      const typeLabels: Record<ReminderType, string> = {
-        habit: 'Привычки',
-        task: 'Задачи',
-        finance: 'Финансы',
-        event: 'События',
-        other: 'Другое'
-      };
-      
       Object.entries(byType).forEach(([type, items]) => {
         const emoji = typeEmojis[type as ReminderType] || '🔔';
-        const label = typeLabels[type as ReminderType] || 'Другое';
+        const label = i18n.t(`common:notifications.scheduler.types.${type}`, { defaultValue: type });
         const titles = items.map(r => r.title).join(', ');
         body += `${emoji} ${label}: ${titles}\n`;
       });
@@ -269,9 +258,15 @@ class NotificationSchedulerClass {
       body = reminders.map(r => `• ${r.title}`).join('\n');
     }
     
+    // Заголовок с правильной формой множественного числа
+    const title = i18n.t('common:notifications.scheduler.groupedTitle', { 
+      count,
+      defaultValue: `You have ${count} tasks for this time`
+    });
+    
     try {
       await NotificationService.show({
-        title: `У вас ${count} ${this.pluralize(count, 'дело', 'дела', 'дел')} на это время`,
+        title,
         body: body.trim(),
         tag: 'grouped-notification',
         data: { 
@@ -303,22 +298,6 @@ class NotificationSchedulerClass {
     });
     
     return groups;
-  }
-
-  /**
-   * Склонение слов для русского языка
-   */
-  private pluralize(count: number, one: string, few: string, many: string): string {
-    const mod10 = count % 10;
-    const mod100 = count % 100;
-    
-    if (mod10 === 1 && mod100 !== 11) {
-      return one;
-    }
-    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) {
-      return few;
-    }
-    return many;
   }
 
   /**

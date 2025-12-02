@@ -1,48 +1,5 @@
 /**
  * 🎨 ColorPicker — Современный color picker на Radix UI Popover
- * 
- * Компонент выбора цвета на основе проверенных примитивов:
- * - Popover (Radix UI) - позиционирование, portal, click outside
- * - CSS переменные - палитра из 20 цветов через --palette-{color}-*
- * - Controlled состояние - open/onOpenChange
- * 
- * ОСНОВНЫЕ ВОЗМОЖНОСТИ:
- * ✅ Меньше кода (используем Radix Popover)
- * ✅ Автоматическое позиционирование (collision detection)
- * ✅ Лучшая accessibility (ARIA из Radix)
- * ✅ CSS переменные вместо Tailwind классов
- * ✅ Controlled состояние для интеграции
- * ✅ Минималистичный дизайн (Jony Ive style)
- * 
- * @example
- * ```tsx
- * import { ColorPicker } from '@/shared/ui/color-picker';
- * 
- * const [isOpen, setIsOpen] = useState(false);
- * const [color, setColor] = useState<ColorVariant>('blue');
- * 
- * // С дефолтным триггером
- * <ColorPicker
- *   value={color}
- *   onChange={setColor}
- *   open={isOpen}
- *   onOpenChange={setIsOpen}
- * />
- * 
- * // С кастомным триггером
- * <ColorPicker
- *   value={color}
- *   onChange={setColor}
- *   open={isOpen}
- *   onOpenChange={setIsOpen}
- * >
- *   <Button>Выбрать цвет</Button>
- * </ColorPicker>
- * ```
- * 
- * @module shared/ui/color-picker
- * @created 28 ноября 2025
- * @updated 28 ноября 2025 - переименование ColorPickerV2 → ColorPicker (единственная версия)
  */
 
 import React, { useState } from 'react';
@@ -54,7 +11,7 @@ import {
 } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { COLOR_VARIANTS } from '@/shared/constants/colors';
-import { Check } from 'lucide-react';
+import { Check } from '@/shared/assets/icons/system';
 import type { ColorPickerProps } from './ColorPicker.types';
 import type { ColorVariant } from '@/shared/constants/colors';
 

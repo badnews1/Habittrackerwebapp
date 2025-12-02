@@ -48,10 +48,15 @@ export const HabitSectionSelect: React.FC<HabitSectionSelectProps> = ({
   const updateSectionColor = useHabitsStore((state) => state.updateSectionColor);
   const deleteSection = useHabitsStore((state) => state.deleteSection);
 
-  // Определяем, какие разделы можно удалять (все кроме стандартных)
+  // Определяем, какие разделы можно удалять
+  // - Нельзя удалять стандартные разделы (other, morning, day, evening)
+  // - Нельзя удалить последний раздел
   const canDelete = (sectionName: string) => {
     const defaultSectionNames = DEFAULT_SECTIONS_WITH_COLORS.map((s) => s.name);
-    return !defaultSectionNames.includes(sectionName);
+    const isDefaultSection = defaultSectionNames.includes(sectionName);
+    const isLastSection = sections.length <= 1;
+    
+    return !isDefaultSection && !isLastSection;
   };
 
   // Считаем использование раздела
@@ -67,8 +72,8 @@ export const HabitSectionSelect: React.FC<HabitSectionSelectProps> = ({
       return `${tUi('ui.deleteSection')} "${translatedName}"?`;
     }
     
-    const lastDefaultSection = DEFAULT_SECTIONS_WITH_COLORS[DEFAULT_SECTIONS_WITH_COLORS.length - 1];
-    const translatedDefaultSection = getTranslatedSectionName(lastDefaultSection.name);
+    // Используем первый раздел из дефолтных (other), как в store
+    const translatedDefaultSection = getTranslatedSectionName(DEFAULT_SECTIONS_WITH_COLORS[0].name);
     
     return `${tUi('ui.deleteSection')} "${translatedName}"?\n\nВ этом разделе ${usageCount} ${
       usageCount === 1 ? t('habits:habitItem.usedInHabit') : t('habits:habitItem.usedInHabits')
@@ -91,6 +96,7 @@ export const HabitSectionSelect: React.FC<HabitSectionSelectProps> = ({
       inputPlaceholder={tUi('ui.sectionName')}
       open={open}
       onOpenChange={onOpenChange}
+      renderSectionName={getTranslatedSectionName}
     />
   );
 };

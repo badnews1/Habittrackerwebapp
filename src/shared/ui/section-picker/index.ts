@@ -1,8 +1,4 @@
-/**
- * Экспорт SectionPicker
- * 
- * @module shared/ui/section-picker
- */
+/** Экспорт SectionPicker */
 
 export { SectionPicker } from './SectionPicker';
-export type { SectionPickerProps } from './SectionPicker.types';
+export type { SectionPickerProps, SectionItem } from './SectionPicker.types';

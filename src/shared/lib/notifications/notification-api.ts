@@ -3,10 +3,6 @@
  * 
  * Чистая обёртка над браузерным API без бизнес-логики.
  * Используется scheduler для показа уведомлений.
- * 
- * @module shared/lib/notifications
- * @created 22 ноября 2025
- * @updated 30 ноября 2025 - миграция из shared/services в shared/lib согласно FSD
  */
 
 /**
@@ -92,18 +88,6 @@ export class NotificationService {
 
   /**
    * Показ уведомления
-   * 
-   * @param config - Конфигурация уведомления
-   * @returns Promise<void>
-   * 
-   * @example
-   * ```typescript
-   * await NotificationService.show({
-   *   title: 'Напоминание',
-   *   body: 'Время выполнить привычку: Зарядка',
-   *   icon: '💪'
-   * });
-   * ```
    */
   static async show(config: NotificationConfig): Promise<void> {
     if (!this.isSupported()) {

@@ -20,11 +20,11 @@ export {
   // Специализированные функции для частоты
   declineTimesPerWeek,
   declineTimesPerMonth,
-  declineTimesIn,
   
   // Единицы измерения
   declineUnit,
   getShortUnit,
+  clearUnitMappingCache,
   
   // Форматирование чисел
   formatNumber,

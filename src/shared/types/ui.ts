@@ -4,10 +4,6 @@
  * @description
  * Универсальные интерфейсы для построения переиспользуемых UI компонентов.
  * Не зависят от конкретных entity (Habit, Task, и т.д.)
- * 
- * @module shared/types
- * @created 29 ноября 2025
- * @updated 30 ноября 2025 - миграция из shared/model в shared/types согласно FSD
  */
 
 /**

@@ -36,10 +36,10 @@ const DialogOverlay = React.forwardRef<
     level?: "modal" | "nested";
   }
 >(({ className, level = "modal", ...props }, ref) => {
-  // z-index для разных уровней модальных окон
-  const zIndexClasses = {
-    modal: "z-50",   // Базовый уровень модальных окон
-    nested: "z-[60]", // Вложенные модалки (если нужны)
+  // z-index из CSS-переменных для разных уровней модальных окон
+  const zIndexStyles = {
+    modal: { zIndex: 'var(--z-modal)' },
+    nested: { zIndex: 'var(--z-modal-nested)' },
   };
 
   return (
@@ -48,9 +48,9 @@ const DialogOverlay = React.forwardRef<
       data-slot="dialog-overlay"
       className={cn(
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 bg-black/50 backdrop-blur-[2px]",
-        zIndexClasses[level],
         className,
       )}
+      style={zIndexStyles[level]}
       {...props}
     />
   );
@@ -78,10 +78,10 @@ function DialogContent({
     "6xl": "sm:max-w-6xl", // 1152px
   };
 
-  // z-index для разных уровней модальных окон
-  const zIndexClasses = {
-    modal: "z-50",   // Базовый уровень модальных окон
-    nested: "z-[60]", // Вложенные модалки (если нужны)
+  // z-index из CSS-переменных для разных уровней модальных окон
+  const zIndexStyles = {
+    modal: { zIndex: 'var(--z-modal)' },
+    nested: { zIndex: 'var(--z-modal-nested)' },
   };
 
   return (
@@ -91,10 +91,10 @@ function DialogContent({
         data-slot="dialog-content"
         className={cn(
           "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-0 rounded-[20px] border p-0 shadow-2xl duration-200",
-          zIndexClasses[level],
           sizeClasses[size],
           className,
         )}
+        style={zIndexStyles[level]}
         {...props}
       >
         {children}

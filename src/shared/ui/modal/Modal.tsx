@@ -49,15 +49,15 @@ import { useTranslation } from 'react-i18next';
 // ============================================
 
 /**
- * Z-index уровни для модальных окон
+ * Z-index уровни для модальных окон (из CSS-переменных)
  */
-const Z_INDEX = {
+const Z_INDEX_STYLES = {
   /** Базовый уровень модальных окон */
-  modal: 'z-50',
+  modal: { zIndex: 'var(--z-modal)' },
   /** Диалоги поверх модалок */
-  dialog: 'z-[60]',
+  dialog: { zIndex: 'var(--z-popover)' },
   /** Вложенные модалки (например, FrequencyModal внутри AddHabitModal) */
-  nested: 'z-[70]',
+  nested: { zIndex: 'var(--z-modal-nested)' },
 } as const;
 
 /**
@@ -137,16 +137,17 @@ function ModalRoot({
     return () => document.removeEventListener('keydown', handleEscape);
   }, [onClose]);
 
-  // Получаем z-index класс в зависимости от уровня
-  const zIndex = {
-    modal: Z_INDEX.modal,
-    dialog: Z_INDEX.dialog,
-    nested: Z_INDEX.nested,
+  // Получаем z-index стиль в зависимости от уровня
+  const zIndexStyle = {
+    modal: Z_INDEX_STYLES.modal,
+    dialog: Z_INDEX_STYLES.dialog,
+    nested: Z_INDEX_STYLES.nested,
   }[level];
 
   const modalContent = (
     <div 
-      className={`${MODAL_STYLES.center} ${zIndex} ${className}`} 
+      className={`${MODAL_STYLES.center} ${className}`} 
+      style={zIndexStyle}
       data-modal="true" 
       data-modal-level={level}
     >

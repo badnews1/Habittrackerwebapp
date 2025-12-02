@@ -42,7 +42,7 @@ export default {
     volume: {
       glasses: "стаканы",
       liters: "литры",
-      milliliters: "милилитры",
+      milliliters: "миллилитры",
       portions: "порции",
       cups: "чашки",
     },

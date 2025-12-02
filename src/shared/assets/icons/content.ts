@@ -1,18 +1,5 @@
 /**
  * Контентные иконки для пользовательского выбора
- * 
- * Эти иконки показываются пользователю в пикерах (привычки, модули и т.д.)
- * Базовый набор: 100 иконок
- * 
- * Импорт всех иконок разом:
- * ```typescript
- * import * as ContentIcons from '@/shared/assets/icons/content';
- * 
- * const iconsList = Object.entries(ContentIcons).map(([name, Icon]) => ({
- *   name,
- *   Icon
- * }));
- * ```
  */
 
 export {

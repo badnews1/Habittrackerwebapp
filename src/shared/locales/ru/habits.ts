@@ -35,30 +35,8 @@ export default {
     value: "Целевое значение",
     unit: "Единица измерения"
   },
-  units: {
-    times: "раз",
-    minutes: "минут",
-    hours: "часов",
-    kilometers: "километров",
-    meters: "метров",
-    pages: "страниц",
-    glasses: "стаканов",
-    liters: "литров",
-    milliliters: "миллилитров",
-    calories: "калорий",
-    grams: "грамм",
-    kilograms: "килограмм",
-    reps: "повторений",
-    sets: "подходов",
-    steps: "шагов",
-    dollars: "долларов",
-    euros: "евро",
-    rubles: "рублей",
-    words: "слов",
-    lines: "строк",
-    chapters: "глав",
-    custom: "своя"
-  },
+  // ℹ️ Единицы измерения перенесены в units.ts для устранения дублирования
+  // Используйте units:units.{category}.{key} вместо habits:units.{key}
   completion: {
     completed: "Выполнено",
     notCompleted: "Не выполнено",

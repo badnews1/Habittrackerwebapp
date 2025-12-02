@@ -6,14 +6,14 @@
  */
 
 import {
-  COUNTING_UNITS,
-  TIME_UNITS,
-  DISTANCE_UNITS,
-  WEIGHT_UNITS,
-  VOLUME_UNITS,
-  CALORIE_UNITS,
-  READING_UNITS,
-  CURRENCY_UNITS,
+  COUNTING_UNIT_KEYS,
+  TIME_UNIT_KEYS,
+  DISTANCE_UNIT_KEYS,
+  WEIGHT_UNIT_KEYS,
+  VOLUME_UNIT_KEYS,
+  CALORIE_UNIT_KEYS,
+  READING_UNIT_KEYS,
+  CURRENCY_UNIT_KEYS,
 } from '@/shared/constants/units';
 import type { UnitGroup } from '@/shared/ui/unit-picker';
 import type { Section } from './types';
@@ -59,8 +59,6 @@ export const SYSTEM_SECTION_KEYS = {
 
 export const DEFAULT_SECTION = SYSTEM_SECTION_KEYS.other;
 
-export const PROTECTED_SECTIONS = [DEFAULT_SECTION];
-
 /**
  * Дефолтные разделы с цветами
  * 
@@ -91,6 +89,9 @@ export const DEFAULT_SECTIONS = DEFAULT_SECTIONS_WITH_COLORS.map(s => s.name);
 /**
  * Группы единиц измерения для привычек
  * 
+ * ⚠️ DEPRECATED: Эта константа использует хардкод labels на русском языке.
+ * Используйте хук useHabitUnitGroups() для получения локализованных групп.
+ * 
  * Собираются из атомарных констант из /shared/constants/units.ts
  * 
  * Всего 22 единицы в 6 группах:
@@ -100,30 +101,32 @@ export const DEFAULT_SECTIONS = DEFAULT_SECTIONS_WITH_COLORS.map(s => s.name);
  * - Здоровье и питание: 8 единиц
  * - Чтение и обучение: 3 единицы
  * - Финансы: 3 единицы
+ * 
+ * @deprecated Используйте useHabitUnitGroups() вместо этой константы
  */
 export const HABIT_UNIT_GROUPS: UnitGroup[] = [
   {
     label: 'Счёт',
-    units: COUNTING_UNITS,
+    units: COUNTING_UNIT_KEYS,
   },
   {
     label: 'Время',
-    units: TIME_UNITS,
+    units: TIME_UNIT_KEYS,
   },
   {
     label: 'Расстояние и движение',
-    units: DISTANCE_UNITS,
+    units: DISTANCE_UNIT_KEYS,
   },
   {
     label: 'Здоровье и питание',
-    units: [...CALORIE_UNITS, ...WEIGHT_UNITS, ...VOLUME_UNITS],
+    units: [...CALORIE_UNIT_KEYS, ...WEIGHT_UNIT_KEYS, ...VOLUME_UNIT_KEYS],
   },
   {
     label: 'Чтение и обучение',
-    units: READING_UNITS,
+    units: READING_UNIT_KEYS,
   },
   {
     label: 'Финансы',
-    units: CURRENCY_UNITS,
+    units: CURRENCY_UNIT_KEYS,
   },
 ];

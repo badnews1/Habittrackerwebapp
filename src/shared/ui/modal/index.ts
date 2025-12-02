@@ -1,9 +1,4 @@
-/**
- * Barrel export для Modal компонента
- * 
- * @module shared/ui/modal
- * @created 26 ноября 2025
- */
+/** Barrel export для Modal компонента */
 
 export { Modal } from './Modal';
 export type {

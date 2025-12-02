@@ -1,8 +1,4 @@
-/**
- * Экспорт компонента ProgressBar
- * 
- * @module shared/ui/progress-bar
- */
+/** Экспорт компонента ProgressBar */
 
 export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps } from './ProgressBar';

@@ -1,8 +1,5 @@
 /**
- * 🎨 ColorPicker — экспорт компонента
- * 
- * @module shared/ui/color-picker
- * @created 28 ноября 2025
+ * ColorPicker — экспорт компонента
  */
 
 export { ColorPicker } from './ColorPicker';

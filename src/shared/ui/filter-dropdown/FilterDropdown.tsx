@@ -100,10 +100,11 @@ export function FilterDropdown({
       {/* Dropdown панель */}
       {isOpen && (
         <div 
-          className="absolute right-0 mt-2 w-60 h-[280px] rounded-2xl shadow-lg border z-50 overflow-hidden flex flex-col"
+          className="absolute right-0 mt-2 w-60 h-[280px] rounded-2xl shadow-lg border overflow-hidden flex flex-col"
           style={{ 
             backgroundColor: 'var(--bg-primary)',
-            borderColor: 'var(--border-default)'
+            borderColor: 'var(--border-default)',
+            zIndex: 'var(--z-dropdown)'
           }}
         >
           {/* Header с кнопкой "Сбросить" */}

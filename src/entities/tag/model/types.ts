@@ -16,7 +16,7 @@ import type { ColorVariant } from '@/shared/constants/colors';
  * Любой тег в приложении должен соответствовать этому интерфейсу.
  * 
  * @property name - Название тега (уникальное)
- * @property color - Цвет тега (ColorVariant или legacy Tailwind строка)
+ * @property color - Цвет тега из универсальной палитры (20 цветов)
  * 
  * @example
  * ```ts
@@ -30,6 +30,6 @@ export interface BaseTag {
   /** Название тега (уникальный идентификатор) */
   name: string;
   
-  /** Цвет тега - ColorVariant ('blue', 'red', ...) или legacy Tailwind строка */
-  color: string | ColorVariant;
+  /** Цвет тега из универсальной палитры (gray, red, blue, green, ...) */
+  color: ColorVariant;
 }

@@ -207,7 +207,7 @@ export const HabitItem: React.FC<HabitItemProps> = ({
                       return (
                         <Badge 
                           key={tagName}
-                          variant={tag?.color as any}
+                          variant={tag?.color ?? 'gray'}
                           className="flex-shrink-0"
                         >
                           <Tag className="w-3 h-3" />

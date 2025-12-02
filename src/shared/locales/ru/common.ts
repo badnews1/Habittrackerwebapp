@@ -56,90 +56,97 @@ export default {
     timesPerMonth_few: "раза в месяц",
     timesPerMonth_many: "раз в месяц",
     
-    // Единицы измерения
-    unit_разы_one: "раз",
-    unit_разы_few: "раза",
-    unit_разы_many: "раз",
+    // Единицы измерения (ключи соответствуют UNIT_DEFINITIONS из @/shared/constants/units)
+    // Counting units
+    unit_times_one: "раз",
+    unit_times_few: "раза",
+    unit_times_many: "раз",
     
-    unit_штуки_one: "штука",
-    unit_штуки_few: "штуки",
-    unit_штуки_many: "штук",
+    unit_pieces_one: "штука",
+    unit_pieces_few: "штуки",
+    unit_pieces_many: "штук",
     
-    unit_баллы_one: "балл",
-    unit_баллы_few: "балла",
-    unit_баллы_many: "баллов",
+    unit_points_one: "балл",
+    unit_points_few: "балла",
+    unit_points_many: "баллов",
     
-    unit_минуты_one: "минута",
-    unit_минуты_few: "минуты",
-    unit_минуты_many: "минут",
+    unit_sets_one: "подход",
+    unit_sets_few: "подхода",
+    unit_sets_many: "подходов",
     
-    unit_часы_one: "час",
-    unit_часы_few: "часа",
-    unit_часы_many: "часов",
+    unit_tasks_one: "задача",
+    unit_tasks_few: "задачи",
+    unit_tasks_many: "задач",
     
-    unit_шаги_one: "шаг",
-    unit_шаги_few: "шага",
-    unit_шаги_many: "шагов",
+    // Time units
+    unit_minutes_one: "минута",
+    unit_minutes_few: "минуты",
+    unit_minutes_many: "минут",
     
-    unit_километры_one: "километр",
-    unit_километры_few: "километра",
-    unit_километры_many: "километров",
+    unit_hours_one: "час",
+    unit_hours_few: "часа",
+    unit_hours_many: "часов",
     
-    unit_метры_one: "метр",
-    unit_метры_few: "метра",
-    unit_метры_many: "метров",
+    // Distance units
+    unit_steps_one: "шаг",
+    unit_steps_few: "шага",
+    unit_steps_many: "шагов",
     
-    unit_подходы_one: "подход",
-    unit_подходы_few: "подхода",
-    unit_подходы_many: "подходов",
+    unit_kilometers_one: "километр",
+    unit_kilometers_few: "километра",
+    unit_kilometers_many: "километров",
     
-    unit_калории_one: "калория",
-    unit_калории_few: "калории",
-    unit_калории_many: "калорий",
+    unit_meters_one: "метр",
+    unit_meters_few: "метра",
+    unit_meters_many: "метров",
     
-    unit_килограммы_one: "килограмм",
-    unit_килограммы_few: "килограмма",
-    unit_килограммы_many: "килограммов",
+    // Weight units
+    unit_kilograms_one: "килограмм",
+    unit_kilograms_few: "килограмма",
+    unit_kilograms_many: "килограммов",
     
-    unit_граммы_one: "грамм",
-    unit_граммы_few: "грамма",
-    unit_граммы_many: "граммов",
+    unit_grams_one: "грамм",
+    unit_grams_few: "грамма",
+    unit_grams_many: "граммов",
     
-    unit_стаканы_one: "стакан",
-    unit_стаканы_few: "стакана",
-    unit_стаканы_many: "стаканов",
+    // Volume units
+    unit_glasses_one: "стакан",
+    unit_glasses_few: "стакана",
+    unit_glasses_many: "стаканов",
     
-    unit_литры_one: "литр",
-    unit_литры_few: "литра",
-    unit_литры_many: "литров",
+    unit_liters_one: "литр",
+    unit_liters_few: "литра",
+    unit_liters_many: "литров",
     
-    unit_милилитры_one: "милилитр",
-    unit_милилитры_few: "милилитра",
-    unit_милилитры_many: "милилитров",
+    unit_milliliters_one: "миллилитр",
+    unit_milliliters_few: "миллилитра",
+    unit_milliliters_many: "миллилитров",
     
-    unit_порции_one: "порция",
-    unit_порции_few: "порции",
-    unit_порции_many: "порций",
+    unit_portions_one: "порция",
+    unit_portions_few: "порции",
+    unit_portions_many: "порций",
     
-    unit_чашки_one: "чашка",
-    unit_чашки_few: "чашки",
-    unit_чашки_many: "чашек",
+    unit_cups_one: "чашка",
+    unit_cups_few: "чашки",
+    unit_cups_many: "чашек",
     
-    unit_страницы_one: "страница",
-    unit_страницы_few: "страницы",
-    unit_страницы_many: "страниц",
+    // Calorie units
+    unit_calories_one: "калория",
+    unit_calories_few: "калории",
+    unit_calories_many: "калорий",
     
-    unit_слова_one: "слово",
-    unit_слова_few: "слова",
-    unit_слова_many: "слов",
+    // Reading units
+    unit_pages_one: "страница",
+    unit_pages_few: "страницы",
+    unit_pages_many: "страниц",
     
-    unit_главы_one: "глава",
-    unit_главы_few: "главы",
-    unit_главы_many: "глав",
+    unit_words_one: "слово",
+    unit_words_few: "слова",
+    unit_words_many: "слов",
     
-    unit_задачи_one: "задача",
-    unit_задачи_few: "задачи",
-    unit_задачи_many: "задач",
+    unit_chapters_one: "глава",
+    unit_chapters_few: "главы",
+    unit_chapters_many: "глав",
   },
   
   weekdays: {
@@ -161,6 +168,7 @@ export default {
       saturday: "Сб",
       sunday: "Вс",
     },
+    // В русском нет естественных сокращений короче 2 букв, поэтому shortest = short
     shortest: {
       monday: "Пн",
       tuesday: "Вт",
@@ -200,6 +208,20 @@ export default {
       october: "Октябрь",
       november: "Ноябрь",
       december: "Декабрь"
+    },
+    genitive: {
+      january: "января",
+      february: "февраля",
+      march: "марта",
+      april: "апреля",
+      may: "мая",
+      june: "июня",
+      july: "июля",
+      august: "августа",
+      september: "сентября",
+      october: "октября",
+      november: "ноября",
+      december: "декабря"
     }
   },
   
@@ -223,8 +245,28 @@ export default {
       enable: "Включить",
       dismiss: "Позже"
     },
-    granted: "✅ Уведомления включены!",
+    granted: "Уведомления включены",
     denied: "Уведомления заблокированы",
-    default: "Уведомления не настроены"
+    default: "Уведомления не настроены",
+    
+    // Планировщик уведомлений
+    scheduler: {
+      // Типы напоминаний
+      types: {
+        habit: "Привычки",
+        task: "Задачи",
+        finance: "Финансы",
+        event: "События",
+        other: "Другое"
+      },
+      
+      // Групповое уведомление
+      groupedTitle_one: "У вас {{count}} дело на это время",
+      groupedTitle_few: "У вас {{count}} дела на это время",
+      groupedTitle_many: "У вас {{count}} дел на это время",
+      
+      // Уведомление о привычке
+      habitReminder: "Время выполнить привычку: {{habitName}}"
+    }
   }
 } as const;

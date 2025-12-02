@@ -2,39 +2,6 @@ import { useEffect, RefObject } from 'react';
 
 /**
  * Универсальный хук для определения кликов вне указанного элемента
- * 
- * @description
- * Позволяет закрывать выпадающие меню, модальные окна и другие элементы при клике снаружи.
- * Использует фазу захвата событий для надёжного определения клика вне элемента.
- * Поддерживает вложенные dropdown через систему уникальных ID (data-dropdown-id).
- * Игнорирует клики внутри модальных окон уровня dialog/nested (ConfirmDialog),
- * но НЕ игнорирует клики в основных модалах (level="modal").
- * 
- * @param ref - React ref элемента, за которым нужно следить
- * @param handler - Функция-обработчик, вызываемая при клике снаружи
- * @param enabled - Флаг активации хука (по умолчанию true)
- * 
- * @example
- * ```tsx
- * const MyDropdown = () => {
- *   const [isOpen, setIsOpen] = useState(false);
- *   const dropdownRef = useRef<HTMLDivElement>(null);
- *   
- *   useClickOutside(dropdownRef, () => setIsOpen(false), isOpen);
- *   
- *   return (
- *     <div ref={dropdownRef}>
- *       {isOpen && <div>Dropdown content</div>}
- *     </div>
- *   );
- * };
- * ```
- * 
- * @since 19 ноября 2024
- * @updated 21 ноября 2025 - мигрирован в /shared/hooks
- * @updated 23 ноября 2025 - добавлена поддержка вложенных dropdown через уникальные ID
- * @updated 23 ноября 2025 - добавлена умная логика игнорирования кликов в модалах по уровню
- * @updated 30 ноября 2025 - миграция в /shared/lib/hooks согласно канонам FSD
  */
 export function useClickOutside(
   ref: RefObject<HTMLElement>,

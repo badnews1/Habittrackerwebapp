@@ -3,10 +3,6 @@
  * 
  * Переиспользуемый глупый компонент для отображения шапки календаря.
  * Используется в habit-calendar и habit-daily-chart виджетах.
- * 
- * @module shared/ui/calendar-day-header
- * @migrated 30 ноября 2025 - перемещён из features/habit-calendar в shared/ui (FSD)
- * @refactored 2 декабря 2025 - убран mb-4, spacing управляется родителем
  */
 
 import React from 'react';
@@ -20,20 +16,20 @@ export function CalendarDayHeader({
   monthDays,
   getDayName,
 }: CalendarDayHeaderProps) {
-  // Padding для выравнивания с реальными точками графика (пропуск фиктивных точек)
-  // Расчёт: (ширина колонки + gap) / 2 + небольшая корректировка
-  const paddingStyle = monthDays.length === 28 
-    ? 'px-[18px]' // скорректировано для точного выравнивания
-    : monthDays.length === 29 
-    ? 'px-[17.5px]' 
-    : monthDays.length === 30 
-    ? 'px-[17px]' 
-    : 'px-[16.5px]';
+  // Динамический расчёт padding для выравнивания с реальными точками графика
+  // Базовое значение 20px для 28 дней, уменьшается на 0.5px за каждый дополнительный день
+  // Результаты: 28 дней = 20px, 29 дней = 19.5px, 30 дней = 19px, 31 день = 18.5px
+  const paddingPx = 20 - (monthDays.length - 28) * 0.5;
+  
+  // Динамический расчёт gap между днями
+  // Базовое значение 7px для 28 дней, уменьшается на 1px за каждый дополнительный день
+  // Результаты: 28 дней = 7px, 29 дней = 6px, 30 дней = 5px, 31 день = 4px
+  const gapPx = 7 - (monthDays.length - 28);
 
   return (
-    <div className={paddingStyle}>
+    <div style={{ paddingLeft: `${paddingPx}px`, paddingRight: `${paddingPx}px` }}>
       {/* Дни недели */}
-      <div className={`flex ${monthDays.length === 28 ? 'gap-[7px]' : monthDays.length === 29 ? 'gap-[6px]' : monthDays.length === 30 ? 'gap-[5px]' : 'gap-1'}`} style={{ transform: 'translateY(5px)' }}>
+      <div className="flex" style={{ gap: `${gapPx}px`, transform: 'translateY(5px)' }}>
         {monthDays.map((dayData) => (
           <div
             key={`calendar-header-day-${dayData.day}`}
@@ -45,7 +41,7 @@ export function CalendarDayHeader({
         ))}
       </div>
       {/* Числа месяца */}
-      <div className={`flex ${monthDays.length === 28 ? 'gap-[7px]' : monthDays.length === 29 ? 'gap-[6px]' : monthDays.length === 30 ? 'gap-[5px]' : 'gap-1'}`} style={{ transform: 'translateY(5px)' }}>
+      <div className="flex" style={{ gap: `${gapPx}px`, transform: 'translateY(5px)' }}>
         {monthDays.map((dayData) => {
           // Проверяем, является ли этот день сегодняшним
           const today = new Date();

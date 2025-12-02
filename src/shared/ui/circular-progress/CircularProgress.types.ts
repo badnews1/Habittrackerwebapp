@@ -1,7 +1,5 @@
 /**
  * Типы для CircularProgress
- * 
- * @module shared/ui/circular-progress
  */
 
 export interface CircularProgressProps {
@@ -13,4 +11,12 @@ export interface CircularProgressProps {
   strokeWidth?: number;
   /** CSS класс для кастомизации */
   className?: string;
+  /** Показывать процент внутри круга */
+  showLabel?: boolean;
+  /** Дополнительный текст под процентом */
+  label?: string;
+  /** Цвет прогресса (CSS переменная или значение) */
+  progressColor?: string;
+  /** Цвет фона круга (CSS переменная или значение) */
+  backgroundColor?: string;
 }

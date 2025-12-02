@@ -33,7 +33,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Bell, X } from 'lucide-react';
+import { Bell, X } from '@/shared/assets/icons/system';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { NotificationService } from '@/shared/lib/notifications';
@@ -91,7 +91,7 @@ export const NotificationPermissionBanner: React.FC = () => {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 max-w-md">
+    <div className="fixed bottom-6 right-6 max-w-md" style={{ zIndex: 'var(--z-toast)' }}>
       <Alert className="relative shadow-lg">
         <Bell className="h-4 w-4" />
         <AlertTitle>{t('notifications.permission.title')}</AlertTitle>

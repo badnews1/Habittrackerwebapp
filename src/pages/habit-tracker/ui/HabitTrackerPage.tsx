@@ -24,8 +24,12 @@ import { HabitMonthlyCircle } from '@/widgets/habit-monthly-circle';
 import { getDaysInMonth, formatDate, getLocalizedDayName } from '@/shared/lib/date';
 import { useHabitsStore } from '@/app/store';
 import { Card } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
 
 export function HabitTrackerPage() {
+  // ==================== I18N ====================
+  const { t } = useTranslation('common');
+
   // Получаем данные и actions из store
   const {
     habits,
@@ -50,7 +54,7 @@ export function HabitTrackerPage() {
     selectedYear,
     monthDays,
     formatDate,
-    getDayName: getLocalizedDayName, // Используем локализованную версию
+    getDayName: (date: Date) => getLocalizedDayName(date, t), // Wrapper с передачей t
   };
 
   // Обработчик клика по иконке статистики

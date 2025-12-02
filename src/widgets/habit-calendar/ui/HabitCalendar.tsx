@@ -89,9 +89,18 @@ export function HabitCalendar({
   
   // Адаптивные размеры в зависимости от количества дней
   const daysCount = monthDays.length;
-  const calendarGap = daysCount === 28 ? 'gap-[7px]' : daysCount === 29 ? 'gap-[6px]' : daysCount === 30 ? 'gap-[5px]' : 'gap-1';
+  
+  // Динамический расчёт gap между днями
+  // Базовое значение 7px для 28 дней, уменьшается на 1px за каждый дополнительный день
+  const gapPx = 7 - (daysCount - 28);
+  
+  // Динамический расчёт ширины прогресса
+  // 28 дней = 283px, 30 дней = 279px, остальные = 280px
   const progressWidth = daysCount === 28 ? '283px' : daysCount === 30 ? '279px' : '280px';
-  const headerPadding = daysCount === 28 ? 'px-[18px]' : daysCount === 29 ? 'px-[17.5px]' : daysCount === 30 ? 'px-[17px]' : 'px-[16.5px]';
+  
+  // Динамический расчёт padding заголовка
+  // Базовое значение 20px для 28 дней, уменьшается на 0.5px за каждый дополнительный день
+  const headerPaddingPx = 20 - (daysCount - 28) * 0.5;
 
   const { t } = useTranslation();
 
@@ -129,7 +138,7 @@ export function HabitCalendar({
               </div>
               
               {/* Календарный заголовок */}
-              <div className={`flex-1 ${headerPadding}`}>
+              <div className="flex-1" style={{ paddingLeft: `${headerPaddingPx}px`, paddingRight: `${headerPaddingPx}px` }}>
                 <CalendarDayHeader
                   monthDays={monthDays}
                   getDayName={getDayName}
@@ -186,7 +195,7 @@ export function HabitCalendar({
                             <HabitNameCell habit={habit} width="262px" />
                             
                             {/* 2. Календарные чекбоксы (feature) */}
-                            <div className={`flex ${calendarGap} flex-1`}>
+                            <div className="flex flex-1" style={{ gap: `${gapPx}px` }}>
                               {monthDays.map((dayData, dayIndex) => {
                                 const dateStr = formatDate(dayData.date);
                                 return (

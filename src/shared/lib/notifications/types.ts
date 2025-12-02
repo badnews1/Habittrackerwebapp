@@ -1,9 +1,5 @@
 /**
  * Типы для централизованного планировщика уведомлений
- * 
- * @module shared/lib/notifications
- * @created 22 ноября 2025
- * @updated 30 ноября 2025 - миграция из shared/services в shared/lib согласно FSD
  */
 
 /**

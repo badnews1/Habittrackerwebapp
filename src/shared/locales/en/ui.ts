@@ -32,5 +32,11 @@ export default {
     
     // Search results
     noResults: "No results",
+    
+    // Reminders
+    disableReminder: "Disable reminder",
+    enableReminder: "Enable reminder",
+    reminderTime: "Reminder time",
+    deleteReminder: "Delete reminder",
   }
 } as const;

@@ -32,5 +32,11 @@ export default {
     
     // Результаты поиска
     noResults: "Ничего не найдено",
+    
+    // Напоминания
+    disableReminder: "Отключить напоминание",
+    enableReminder: "Включить напоминание",
+    reminderTime: "Время напоминания",
+    deleteReminder: "Удалить напоминание",
   }
 } as const;
