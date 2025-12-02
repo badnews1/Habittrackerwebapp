@@ -122,6 +122,11 @@ export const ICON_OPTIONS = [
 ] as const;
 
 /**
+ * Тип для элемента опции иконки
+ */
+export type IconOption = typeof ICON_OPTIONS[number];
+
+/**
  * Тип для ключей иконок (автоматически извлекается из ICON_OPTIONS)
  */
 export type IconKey = typeof ICON_OPTIONS[number]['key'];
