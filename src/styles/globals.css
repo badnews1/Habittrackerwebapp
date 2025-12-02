@@ -3,93 +3,341 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  --font-size: 16px;
+  /* ===== Breakpoints (для кастомных media queries) ===== */
+  --breakpoint-xs: 375px;   /* Мобильные (малые) */
+  --breakpoint-sm: 640px;   /* Мобильные (большие) */
+  --breakpoint-md: 768px;   /* Планшеты (портрет) */
+  --breakpoint-lg: 1024px;  /* Планшеты (ландшафт) / малые десктопы */
+  --breakpoint-xl: 1280px;  /* Десктопы */
+  --breakpoint-2xl: 1536px; /* Большие десктопы */
   
-  /* Typography Scale */
-  --text-xs: 0.75rem;      /* 12px */
-  --text-sm: 0.875rem;     /* 14px */
-  --text-base: 1rem;       /* 16px */
-  --text-lg: 1.125rem;     /* 18px */
-  --text-xl: 1.25rem;      /* 20px */
-  --text-2xl: 1.5rem;      /* 24px */
+  /* ===== Spacing Scale ===== */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;    /* 4px */
+  --spacing-2: 0.5rem;     /* 8px */
+  --spacing-3: 0.75rem;    /* 12px */
+  --spacing-4: 1rem;       /* 16px */
+  --spacing-5: 1.25rem;    /* 20px */
+  --spacing-6: 1.5rem;     /* 24px */
+  --spacing-8: 2rem;       /* 32px */
+  --spacing-10: 2.5rem;    /* 40px */
+  --spacing-12: 3rem;      /* 48px */
+  --spacing-16: 4rem;      /* 64px */
+  --spacing-20: 5rem;      /* 80px */
+  --spacing-24: 6rem;      /* 96px */
   
+  /* ===== Widget Sizes (размеры виджетов для консистентности) ===== */
+  --widget-min-width: 280px;
+  --widget-max-width: 400px;
+  --widget-gap: var(--spacing-4);      /* 16px */
+  --widget-padding: var(--spacing-4);  /* 16px */
+  
+  /* ===== Responsive Typography Scale (clamp для плавного масштабирования) ===== */
+  /* Формула: clamp(мин, предпочитаемый (responsive), макс) */
+  --font-size-base: 16px;  /* Базовый размер для расчетов */
+  
+  --text-xs: clamp(0.688rem, 0.65rem + 0.19vw, 0.75rem);      /* 11px → 12px */
+  --text-sm: clamp(0.813rem, 0.77rem + 0.21vw, 0.875rem);     /* 13px → 14px */
+  --text-base: clamp(0.938rem, 0.89rem + 0.24vw, 1rem);       /* 15px → 16px */
+  --text-lg: clamp(1.063rem, 1.01rem + 0.26vw, 1.125rem);     /* 17px → 18px */
+  --text-xl: clamp(1.188rem, 1.13rem + 0.29vw, 1.25rem);      /* 19px → 20px */
+  --text-2xl: clamp(1.375rem, 1.31rem + 0.33vw, 1.5rem);      /* 22px → 24px */
+  --text-3xl: clamp(1.75rem, 1.66rem + 0.43vw, 1.875rem);     /* 28px → 30px */
+  --text-4xl: clamp(2.125rem, 2.02rem + 0.52vw, 2.25rem);     /* 34px → 36px */
+  
+  /* Typography для минимальных размеров (специальные случаи) */
+  --text-xxs: 0.625rem;    /* 10px - фиксированный, для очень мелких меток */
+  
+  /* ===== Цветовая система трекера привычек (светлая тема) ===== */
+  /* Минималистичная система в стиле Джонни Айва */
+  
+  /* 1. Фон */
+  --bg-primary: #ffffff;           /* Основной фон приложения */
+  --bg-secondary: #e5e7eb;         /* Карточки, панели, секции (gray-50) */
+  --bg-hover: #e5e7eb;             /* Фон при hover (gray-100) */
+  --bg-input: #e5e7eb;             /* Фон полей ввода */
+  --bg-disabled: #e5e7eb;          /* Фон неактивных элементов (gray-100) */
+  
+  /* 2. Текст */
+  --text-primary: #262626;         /* Основной текст, заголовки */
+  --text-secondary: #6b7280;       /* Вторичный текст, описания, метки (gray-600) */
+  --text-tertiary: #e5e7eb;        /* Третичный текст, placeholder (gray-400) */
+  --text-disabled: #e5e7eb;        /* Текст неактивных элементов (gray-300) */
+  
+  /* 3. Границы */
+  --border-default: #e5e7eb;       /* Основная граница (gray-200) */
+  --border-hover: #262626;         /* Граница при hover (gray-300) */
+  --border-focus: #262626;         /* Граница при focus (тёмная) */
+  --border-divider: #e5e7eb;       /* Тонкие разделители (gray-100) */
+  
+  /* 4. Специальные фоны */
+  --bg-backdrop: rgba(0, 0, 0, 0.3);  /* Backdrop для модальных окон */
+  
+  /* 5. Акцентные цвета */
+  --accent-primary: #007AFF;       /* Основной акцент - синий macOS/iOS */
+  --accent-primary-hover: #0066D6; /* Акцент при hover */
+  --accent-dark: #262626;          /* Тёмный акцент для кнопок/выделений */
+  --accent-dark-hover: #171717;    /* Тёмный акцент при hover */
+  --accent-text: #ffffff;          /* Текст на акцентном фоне (всегда контрастный) */
+  
+  /* 6. Цвета статусов */
+  --status-success: #34C759;       /* Успех, выполнено (green-500) */
+  --status-error: #FF5C5F;         /* Ошибка, удаление (red-600) */
+  --status-warning: #FAC800;       /* Предупреждение (orange-600) */
+  --status-info: #60a5fa;          /* Информация, заморозка (blue-400) */
+  
+  /* ===== Универсальная цветовая палитра (20 цветов) ===== */
+  /* Используется для тегов, меток, категорий и других цветных элементов */
+  /* Синхронизировано с TAG_COLORS из @/shared/constants/colors.ts */
+  /* Одинаковые для светлой и темной темы */
+  
+  /* 1. Серый (Gray) - bg-gray-200 text-gray-800 border-gray-300 */
+  --palette-gray-bg: #e5e7eb;     /* gray-200 */
+  --palette-gray-text: #1f2937;   /* gray-800 */
+  --palette-gray-border: #d1d5db; /* gray-300 */
+  
+  /* 2. Цинковый (Zinc) - bg-zinc-400 text-zinc-800 border-zinc-200 */
+  --palette-zinc-bg: #a1a1aa;     /* zinc-400 */
+  --palette-zinc-text: #27272a;   /* zinc-800 */
+  --palette-zinc-border: #e4e4e7; /* zinc-200 */
+  
+  /* 3. Каменный (Stone) - bg-stone-300 text-stone-800 border-stone-200 */
+  --palette-stone-bg: #d6d3d1;    /* stone-300 */
+  --palette-stone-text: #292524;  /* stone-800 */
+  --palette-stone-border: #e7e5e4; /* stone-200 */
+  
+  /* 4. Красный (Red) - bg-red-200 text-red-800 border-red-300 */
+  --palette-red-bg: #fecaca;      /* red-200 */
+  --palette-red-text: #991b1b;    /* red-800 */
+  --palette-red-border: #fca5a5;  /* red-300 */
+  
+  /* 5. Розовая роза (Rose) - bg-rose-300 text-rose-800 border-rose-200 */
+  --palette-rose-bg: #fda4af;     /* rose-300 */
+  --palette-rose-text: #9f1239;   /* rose-800 */
+  --palette-rose-border: #fecdd3; /* rose-200 */
+  
+  /* 6. Розовый (Pink) - bg-pink-200 text-pink-800 border-pink-300 */
+  --palette-pink-bg: #fbcfe8;     /* pink-200 */
+  --palette-pink-text: #9f1239;   /* pink-800 */
+  --palette-pink-border: #f9a8d4; /* pink-300 */
+  
+  /* 7. Оранжевый (Orange) - bg-orange-200 text-orange-800 border-orange-300 */
+  --palette-orange-bg: #fed7aa;   /* orange-200 */
+  --palette-orange-text: #9a3412; /* orange-800 */
+  --palette-orange-border: #fdba74; /* orange-300 */
+  
+  /* 8. Янтарный (Amber) - bg-amber-300 text-amber-800 border-amber-200 */
+  --palette-amber-bg: #fcd34d;    /* amber-300 */
+  --palette-amber-text: #92400e;  /* amber-800 */
+  --palette-amber-border: #fde68a; /* amber-200 */
+  
+  /* 9. Жёлтый (Yellow) - bg-yellow-200 text-yellow-800 border-yellow-300 */
+  --palette-yellow-bg: #fef08a;   /* yellow-200 */
+  --palette-yellow-text: #854d0e; /* yellow-800 */
+  --palette-yellow-border: #fde047; /* yellow-300 */
+  
+  /* 10. Лаймовый (Lime) - bg-lime-200 text-lime-800 border-lime-300 */
+  --palette-lime-bg: #d9f99d;     /* lime-200 */
+  --palette-lime-text: #365314;   /* lime-800 */
+  --palette-lime-border: #bef264; /* lime-300 */
+  
+  /* 11. Зелёный (Green) - bg-green-200 text-green-800 border-green-300 */
+  --palette-green-bg: #bbf7d0;    /* green-200 */
+  --palette-green-text: #14532d;  /* green-800 */
+  --palette-green-border: #86efac; /* green-300 */
+  
+  /* 12. Изумрудный (Emerald) - bg-emerald-300 text-emerald-800 border-emerald-200 */
+  --palette-emerald-bg: #6ee7b7;  /* emerald-300 */
+  --palette-emerald-text: #064e3b; /* emerald-800 */
+  --palette-emerald-border: #a7f3d0; /* emerald-200 */
+  
+  /* 13. Бирюзовый (Teal) - bg-teal-200 text-teal-800 border-teal-300 */
+  --palette-teal-bg: #99f6e4;     /* teal-200 */
+  --palette-teal-text: #134e4a;   /* teal-800 */
+  --palette-teal-border: #5eead4; /* teal-300 */
+  
+  /* 14. Голубой (Cyan) - bg-cyan-300 text-cyan-800 border-cyan-200 */
+  --palette-cyan-bg: #67e8f9;     /* cyan-300 */
+  --palette-cyan-text: #164e63;   /* cyan-800 */
+  --palette-cyan-border: #a5f3fc; /* cyan-200 */
+  
+  /* 15. Небесный (Sky) - bg-sky-200 text-sky-800 border-sky-300 */
+  --palette-sky-bg: #bae6fd;      /* sky-200 */
+  --palette-sky-text: #075985;    /* sky-800 */
+  --palette-sky-border: #7dd3fc;  /* sky-300 */
+  
+  /* 16. Синий (Blue) - bg-blue-300 text-blue-800 border-blue-200 */
+  --palette-blue-bg: #93c5fd;     /* blue-300 */
+  --palette-blue-text: #1e3a8a;   /* blue-800 */
+  --palette-blue-border: #bfdbfe; /* blue-200 */
+  
+  /* 17. Индиго (Indigo) - bg-indigo-300 text-indigo-800 border-indigo-200 */
+  --palette-indigo-bg: #a5b4fc;   /* indigo-300 */
+  --palette-indigo-text: #312e81; /* indigo-800 */
+  --palette-indigo-border: #c7d2fe; /* indigo-200 */
+  
+  /* 18. Фиалковый (Violet) - bg-violet-300 text-violet-800 border-violet-200 */
+  --palette-violet-bg: #c4b5fd;   /* violet-300 */
+  --palette-violet-text: #4c1d95; /* violet-800 */
+  --palette-violet-border: #ddd6fe; /* violet-200 */
+  
+  /* 19. Фиолетовый (Purple) - bg-purple-200 text-purple-800 border-purple-300 */
+  --palette-purple-bg: #e9d5ff;   /* purple-200 */
+  --palette-purple-text: #6b21a8; /* purple-800 */
+  --palette-purple-border: #d8b4fe; /* purple-300 */
+  
+  /* 20. Фуксия (Fuchsia) - bg-fuchsia-200 text-fuchsia-800 border-fuchsia-300 */
+  --palette-fuchsia-bg: #f5d0fe;  /* fuchsia-200 */
+  --palette-fuchsia-text: #86198f; /* fuchsia-800 */
+  --palette-fuchsia-border: #f0abfc; /* fuchsia-300 */
+  
+  /* Существующие shadcn/ui токены (для совместимости) */
   --background: #ffffff;
-  --foreground: oklch(0.145 0 0);
+  --foreground: #252525;
   --card: #ffffff;
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: #030213;
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.95 0.0058 264.53);
-  --secondary-foreground: #030213;
-  --muted: #ececf0;
-  --muted-foreground: #717182;
-  --accent: #e9ebef;
-  --accent-foreground: #030213;
+  --card-foreground: #252525;
+  --popover: #ffffff;
+  --popover-foreground: #252525;
+  --primary: #262626;
+  --primary-foreground: #ffffff;
+  --secondary: #e5e7eb;
+  --secondary-foreground: #262626;
+  --muted: #e5e7eb;
+  --muted-foreground: #6b7280;
+  --accent: #e5e7eb;
+  --accent-foreground: #262626;
   --destructive: #d4183d;
   --destructive-foreground: #ffffff;
-  --border: rgba(0, 0, 0, 0.1);
-  --input: transparent;
-  --input-background: #f3f3f5;
-  --switch-background: #cbced4;
+  --border: #e5e7eb;
+  --input: var(--border-default);
+  --input-background: #e5e7eb;
+  --switch-background: #e5e7eb;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --ring: #262626;
+  --chart-1: #e67e22;
+  --chart-2: #3498db;
+  --chart-3: #2c3e50;
+  --chart-4: #f1c40f;
+  --chart-5: #e67e22;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: #030213;
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #fafafa;
+  --sidebar-foreground: #252525;
+  --sidebar-primary: #262626;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #f7f7f7;
+  --sidebar-accent-foreground: #343434;
+  --sidebar-border: #ebebeb;
+  --sidebar-ring: #b5b5b5;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
+  /* ===== Цветовая система трекера привычек (тёмная тема) ===== */
+  
+  /* 1. Фон */
+  --bg-primary: #1f1f1f;           /* Основной фон приложения (системный macOS dark) */
+  --bg-secondary: #353537;         /* Карточки, панели, секции (elevated surface macOS) */
+  --bg-hover: #353537;             /* Фон при hover */
+  --bg-input: #353537;             /* Фон полей ввода */
+  --bg-disabled: #353537;          /* Фон неактивных элементов */
+  
+  /* 2. Текст */
+  --text-primary: #ffffff;         /* Основной текст, заголовки */
+  --text-secondary: #C0C0C0;       /* Вторичный текст (системный secondary label macOS) */
+  --text-tertiary: #353537;        /* Третичный текст, placeholder */
+  --text-disabled: #353537;        /* Текст неактивных элементов */
+  
+  /* 3. Границы */
+  --border-default: #353537;       /* Основная граница (системный separator macOS) */
+  --border-hover: #C0C0C0;         /* Граница при hover */
+  --border-focus: #C0C0C0;         /* Граница при focus (белая) */
+  --border-divider: #353537;       /* Тонкие разделители */
+  
+  /* 4. Специальные фоны */
+  --bg-backdrop: rgba(0, 0, 0, 0.5);  /* Backdrop для модальных окон (темнее для темной темы) */
+  
+  /* 5. Акцентные цвета */
+  --accent-primary: #0A84FF;       /* Основной акцент - синий для тёмной темы */
+  --accent-primary-hover: #1F8FFF; /* Акцент при hover */
+  --accent-dark: #ffffff;          /* Светлый акцент для кнопок (инверсия) */
+  --accent-dark-hover: #e5e5e5;    /* Светлый акцент при hover */
+  --accent-text: #1f1f1f;          /* Текст на акцентном фоне (тёмный для светлого фона) */
+  
+  /* 6. Цвета статусов - одинаковые для обеих тем */
+  --status-success: #34C759;       /* Успех, выполнено (green-500) */
+  --status-error: #FF5C5F;         /* Ошибка, удаление (red-600) */
+  --status-warning: #FAC800;       /* Предупреждение (orange-600) */
+  --status-info: #60a5fa;
+  
+  /* Существующие shadcn/ui токены (для совместимости) */
+  --background: #1F1F1F;
+  --foreground: #FFFFFF;
+  --card: #1F1F1F;
+  --card-foreground: #FFFFFF;
+  --popover: #1f1f1f;
+  --popover-foreground: #FFFFFF;
+  --primary: #FFFFFF;
+  --primary-foreground: #1F1F1F;
+  --secondary: #353537;
+  --secondary-foreground: #FFFFFF;
+  --muted: #353537;
+  --muted-foreground: #C0C0C0;
+  --accent: #353537;
+  --accent-foreground: #FFFFFF;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: #353537;
+  --input: var(--border-default);
+  --input-background: #353537;
+  --switch-background: #353537;
+  --ring: #FFFFFF;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --chart-1: #6366f1;
+  --chart-2: #10b981;
+  --chart-3: #f59e0b;
+  --chart-4: #a855f7;
+  --chart-5: #ef4444;
+  --sidebar: #343434;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #6366f1;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #454545;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #454545;
+  --sidebar-ring: #707070;
 }
 
 @theme inline {
+  /* Регистрация токенов цветовой системы трекера для Tailwind */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-hover: var(--bg-hover);
+  --color-bg-input: var(--bg-input);
+  --color-bg-disabled: var(--bg-disabled);
+  
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-disabled: var(--text-disabled);
+  
+  --color-border-default: var(--border-default);
+  --color-border-hover: var(--border-hover);
+  --color-border-focus: var(--border-focus);
+  --color-border-divider: var(--border-divider);
+  
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-primary-hover: var(--accent-primary-hover);
+  --color-accent-dark: var(--accent-dark);
+  --color-accent-dark-hover: var(--accent-dark-hover);
+  --color-accent-text: var(--accent-text);
+  
+  --color-status-success: var(--status-success);
+  --color-status-error: var(--status-error);
+  --color-status-warning: var(--status-warning);
+  --color-status-info: var(--status-info);
+  
+  /* Существующие shadcn/ui токены (для совместимости) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -144,7 +392,7 @@
 
 /**
  * Base typography для заголовков
- * Применяется ко всем h1-h4, если не переопределено явным классом размера (text-lg, text-xl и т.д.)
+ * Применяется ко всем h1-h4, если не переопределено явны классом размера (text-lg, text-xl и т.д.)
  */
 @layer base {
   h1:not([class*='text-xs']):not([class*='text-sm']):not([class*='text-base']):not([class*='text-lg']):not([class*='text-xl']):not([class*='text-2xl']):not([class*='text-3xl']):not([class*='text-4xl']):not([class*='text-5xl']):not([class*='text-6xl']) {
@@ -178,7 +426,8 @@
   }
 
   label {
-    font-size: var(--text-base);
+    font-size: var(--text-xs);      /* 12px */
+    color: var(--text-secondary);   /* #6b7280 (gray-600) */
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
@@ -197,7 +446,7 @@
 }
 
 html {
-  font-size: var(--font-size);
+  font-size: var(--font-size-base);
 }
 
 /* Hide number input spinners */
@@ -209,4 +458,36 @@ input[type="number"]::-webkit-outer-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* Tooltip - принудительный перенос текста */
+[role="tooltip"] {
+  /* Перенос длинных слов без разбивки обычного текста */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  /* НЕ используем word-break: break-word - ломает обычный текст! */
+}
+
+/* Вертикальное написание текста для названий разделов */
+.writing-mode-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* Стиль для меток названий разделов */
+.section-label {
+  font-size: var(--text-xxs);  /* 10px - очень маленькие метки */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===== 🔮 Подготовка к Container Queries (для будущего масштабирования) ===== */
+/* Container Queries позволят виджетам адаптироваться к размеру своего контейнера, 
+   а не viewport. Критично когда один виджет используется в разных местах 
+   (sidebar vs main content) */
+@supports (container-type: inline-size) {
+  .widget-container {
+    container-type: inline-size;
+  }
 }

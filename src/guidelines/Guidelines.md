@@ -1,61 +1,221 @@
 **Add your own guidelines here**
-<!--
 
-System Guidelines
+ВАЖНО! Приложение находится в разработке, реальных пользователей сейчас нет. Поэтому обратная совместимость сейчас не требуется.
 
-Use this file to provide the AI with rules and guidelines you want it to follow.
-This template outlines a few examples of things you can add. You can add your own sections and format it to suit your needs
+# 🏗️ Feature-Sliced Design (FSD) Architecture
 
-TIP: More context isn't always better. It can confuse the LLM. Try and add the most important rules you need
+Проект использует **Feature-Sliced Design** — методологию архитектуры фронтенда для обеспечения масштабируемости и поддерживаемости.
 
-# General guidelines
+# 🌍 Мультиязычность (i18n)
 
-Any general rules you want the AI to follow.
-For example:
+✅ **МИГРАЦИЯ НА react-i18next ЗАВЕРШЕНА НА 100%!** (49 файлов, 440+ ключей переводов)
 
-* Only use absolute positioning when necessary. Opt for responsive and well structured layouts that use flexbox and grid by default
-* Refactor code as you go to keep code clean
-* Keep file sizes small and put helper functions and components in their own files.
+Проект поддерживает **английский (EN)** и **русский (RU)** языки через **react-i18next**.
 
---------------
+## Быстрое использование:
 
-# Design system guidelines
-Rules for how the AI should make generations look like your company's design system
+```typescript
+import { useTranslation } from 'react-i18next';
 
-Additionally, if you select a design system to use in the prompt box, you can reference
-your design system's components, tokens, variables and components.
-For example:
+export function MyComponent() {
+  const { t } = useTranslation('common'); // namespace: common, habits, stats, validation
+  
+  return <button>{t('common.save')}</button>; // "Save" / "Сохранить"
+}
+```
 
-* Use a base font-size of 14px
-* Date formats should always be in the format “Jun 10”
-* The bottom toolbar should only ever have a maximum of 4 items
-* Never use the floating action button with the bottom toolbar
-* Chips should always come in sets of 3 or more
-* Don't use a dropdown if there are 2 or fewer options
+## Правила:
+- ✅ **ВСЕГДА используйте переводы** вместо хардкода текста
+- ✅ Добавляйте новые ключи в **оба языка** (EN + RU)
+- ✅ Выбирайте правильный namespace: `common`, `habits`, `stats`, `validation`
+- 📖 **Подробная документация**: `/guidelines/i18n-usage.md`
+- 📊 **Прогресс миграции**: `/guidelines/i18n-translation-todo.md`
+- 🎉 **Отчёт о завершении**: `/guidelines/i18n-migration-complete.md`
 
-You can also create sub sections and add more specific details
-For example:
+## Переключение языка:
+```typescript
+import { useLanguage } from '@/features/language-switcher';
 
+const { currentLanguage, toggleLanguage } = useLanguage();
+toggleLanguage(); // EN ↔ RU
+```
 
-## Button
-The Button component is a fundamental interactive element in our design system, designed to trigger actions or navigate
-users through the application. It provides visual feedback and clear affordances to enhance user experience.
+---
 
-### Usage
-Buttons should be used for important actions that users need to take, such as form submissions, confirming choices,
-or initiating processes. They communicate interactivity and should have clear, action-oriented labels.
+## 📚 Слои FSD (от верхнего к нижнему)
 
-### Variants
-* Primary Button
-  * Purpose : Used for the main action in a section or page
-  * Visual Style : Bold, filled with the primary brand color
-  * Usage : One primary button per section to guide users toward the most important action
-* Secondary Button
-  * Purpose : Used for alternative or supporting actions
-  * Visual Style : Outlined with the primary color, transparent background
-  * Usage : Can appear alongside a primary button for less important actions
-* Tertiary Button
-  * Purpose : Used for the least important actions
-  * Visual Style : Text-only with no border, using primary color
-  * Usage : For actions that should be available but not emphasized
--->
+```
+@/app/              ← Инициализация приложения (store, providers, router)
+    ↓
+@/pages/            ← Страницы приложения (композиция widgets)
+    ↓
+@/widgets/          ← Комплексные UI блоки (композиция features + entities)
+    ↓
+@/features/         ← Бизнес-фичи (интеракции пользователя)
+    ↓
+@/entities/         ← Бизнес-сущности (domain-логика)
+    ↓
+@/shared/           ← Переиспользуемые модули (lib, ui, constants)
+    ↓
+@/components/ui/    ← Shadcn UI компоненты (САМЫЙ НИЖНИЙ слой, ниже shared)
+```
+
+## 🔒 Правила импортов (КРИТИЧЕСКИ ВАЖНО!)
+
+### ✅ Разрешённые импорты:
+
+- **Слой может импортировать только из слоёв НИЖЕ себя**
+- **Внутри слоя можно импортировать только через PUBLIC API (`index.ts`)**
+
+### ❌ Запрещённые импорты:
+
+- **НЕЛЬЗЯ импортировать из слоёв ВЫШЕ** (например, `features/` не может импортировать из `widgets/`)
+- **НЕЛЬЗЯ импортировать напрямую внутренности другого модуля** (только через `index.ts`)
+- **НЕЛЬЗЯ создавать циклические зависимости**
+
+### Примеры:
+
+```typescript
+// ✅ ПРАВИЛЬНО
+// widgets/habit-calendar/ui/HabitCalendar.tsx
+import { HabitCheckbox } from '@/features/habit-checkbox';        // features ниже widgets
+import { useHabits } from '@/entities/habit';                     // entities ниже widgets
+import { Button } from '@/components/ui/button';                  // ui компоненты - самый низ
+
+// ❌ НЕПРАВИЛЬНО
+// features/habit-checkbox/ui/HabitCheckbox.tsx
+import { HabitCalendar } from '@/widgets/habit-calendar';         // ❌ widgets выше features!
+import { someUtil } from '@/entities/habit/lib/utils';            // ❌ Не через public API!
+```
+
+## 📁 Структура модуля (сегменты)
+
+Каждый модуль в FSD состоит из сегментов:
+
+```
+feature-name/
+  ├── ui/              # React компоненты
+  ├── model/           # Бизнес-логика, типы, хуки
+  ├── lib/             # Вспомогательные функции
+  ├── api/             # API запросы (если нужны)
+  └── index.ts         # PUBLIC API (точка входа)
+```
+
+### Правила сегментов:
+
+- **`index.ts`** — единственная точка входа в модуль (PUBLIC API)
+- **`ui/`** — только React компоненты
+- **`model/`** — бизнес-логика, типы, константы, хуки
+- **`lib/`** — утилиты и хелперы
+- **Все импорты в другие модули ТОЛЬКО через `index.ts`**
+
+## 🎯 Назначение слоёв
+
+### `@/app/` — Инициализация приложения
+- **Что:** Store (Zustand), провайдеры, роутинг, глобальные настройки
+- **Импорты:** Может импортировать ВСЁ (самый верхний слой)
+- **Примеры:** `/app/store/`, `/app/providers/AppModals.tsx`
+
+### `@/pages/` — Страницы
+- **Что:** Композиция widgets для создания страниц
+- **Импорты:** `widgets/`, `features/`, `entities/`, `shared/`
+- **Примеры:** `/pages/habit-tracker/`, `/pages/habit-manage/`
+
+### `@/widgets/` — Виджеты
+- **Что:** Комплексные UI блоки (композиция features + entities)
+- **Импорты:** `features/`, `entities/`, `shared/`, `@/components/ui/`
+- **Примеры:** `/widgets/habit-calendar/`, `/widgets/app-header/`
+
+### `@/features/` — Фичи
+- **Что:** Бизнес-фичи (интеракции пользователя)
+- **Импорты:** `entities/`, `shared/`, `@/components/ui/`
+- **Примеры:** `/features/habit-checkbox/`, `/features/habit-create/`
+
+### `@/entities/` — Сущности
+- **Что:** Бизнес-сущности (типы, CRUD, domain-логика)
+- **Импорты:** `shared/`, `@/components/ui/`
+- **Примеры:** `/entities/habit/`, `/entities/tag/`
+
+### `@/shared/` — Общий код
+- **Что:** Переиспользуемые модули (ui, lib, constants, types)
+- **Импорты:** Только `@/components/ui/` и другие модули из `shared/`
+- **Примеры:** `/shared/ui/`, `/shared/lib/`, `/shared/constants/`
+
+### `@/components/ui/` — Shadcn UI (САМЫЙ НИЗ)
+- **Что:** Shadcn UI компоненты (низкоуровневая UI библиотека)
+- **Импорты:** Ничего из FSD слоёв (только сторонние библиотеки)
+- **ВАЖНО:** Эти компоненты НЕЛЬЗЯ переносить в другие папки (защищено Figma)
+
+## 🚨 Частые ошибки и как их избежать
+
+### ❌ Импорт из вышестоящего слоя
+```typescript
+// features/habit-checkbox/ui/HabitCheckbox.tsx
+import { HabitCalendar } from '@/widgets/habit-calendar'; // ❌ ОШИБКА!
+```
+**Решение:** Переместить код в правильный слой или пересмотреть архитектуру.
+
+### ❌ Импорт не через PUBLIC API
+```typescript
+// widgets/habit-calendar/ui/HabitCalendar.tsx
+import { calculateStrength } from '@/entities/habit/lib/strength/strengthCalculator'; // ❌ ОШИБКА!
+```
+**Решение:**
+```typescript
+// entities/habit/index.ts
+export { calculateStrength } from './lib/strength/strengthCalculator';
+
+// widgets/habit-calendar/ui/HabitCalendar.tsx
+import { calculateStrength } from '@/entities/habit'; // ✅ ПРАВИЛЬНО
+```
+
+### ❌ Размещение кастомных UI компонентов в `/components/ui/`
+```typescript
+// ❌ ОШИБКА: /components/ui/custom-modal.tsx
+```
+**Решение:**
+```typescript
+// ✅ ПРАВИЛЬНО: /shared/ui/modal/Modal.tsx
+```
+
+## 📝 Чек-лист при создании нового кода
+
+- [ ] Определил правильный слой для нового модуля
+- [ ] Создал `index.ts` с PUBLIC API
+- [ ] Все импорты идут только из нижних слоёв
+- [ ] Не импортирую напрямую внутренности других модулей
+- [ ] Кастомные UI компоненты размещаю в `/shared/ui/`, а не в `/components/ui/`
+- [ ] Shadcn компоненты остаются в `/components/ui/` (не переношу их!)
+
+## 🎨 Специальные правила для UI компонентов
+
+### Shadcn UI (`@/components/ui/`)
+- **Назначение:** Базовые UI компоненты от shadcn/ui
+- **Правило:** НЕЛЬЗЯ переносить в другие папки (защищено Figma Make)
+- **Примеры:** `Button`, `Dialog`, `Input`, `Select`
+
+### Кастомные UI (`@/shared/ui/`)
+- **Назначение:** Переиспользуемые кастомные UI компоненты
+- **Структура:** Каждый компонент в отдельной папке с `index.ts`
+- **Примеры:** `Modal`, `ColorPicker`, `IconPicker`, `ProgressBar`
+
+```
+/shared/ui/
+  ├── modal/
+  │   ├── Modal.tsx
+  │   ├── Modal.types.ts
+  │   └── index.ts
+  ├── color-picker/
+  │   ├── ColorPicker.tsx
+  │   ├── ColorPicker.types.ts
+  │   └── index.ts
+  └── index.ts
+```
+
+## 💡 Советы по работе с FSD
+
+1. **Думай снизу вверх:** Сначала создавай `entities/`, потом `features/`, потом `widgets/`
+2. **Один модуль = одна ответственность:** Если модуль делает слишком много — раздели его
+3. **PUBLIC API — это контракт:** Всё что экспортируется через `index.ts` — это публичный API модуля
+4. **Shared — не свалка:** В `shared/` только действительно переиспользуемые вещи
+5. **Сомневаешься в слое?** Выбирай НИЖНИЙ слой (легче поднять, чем опустить)

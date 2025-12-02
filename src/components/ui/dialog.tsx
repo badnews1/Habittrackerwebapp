@@ -30,34 +30,69 @@ function DialogClose({
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
-function DialogOverlay({
-  className,
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
+const DialogOverlay = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> & {
+    level?: "modal" | "nested";
+  }
+>(({ className, level = "modal", ...props }, ref) => {
+  // z-index для разных уровней модальных окон
+  const zIndexClasses = {
+    modal: "z-50",   // Базовый уровень модальных окон
+    nested: "z-[60]", // Вложенные модалки (если нужны)
+  };
+
   return (
     <DialogPrimitive.Overlay
+      ref={ref}
       data-slot="dialog-overlay"
       className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 bg-black/50 backdrop-blur-[2px]",
+        zIndexClasses[level],
         className,
       )}
       {...props}
     />
   );
-}
+});
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 function DialogContent({
   className,
   children,
+  size = "lg",
+  level = "modal",
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content>) {
+}: React.ComponentProps<typeof DialogPrimitive.Content> & {
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "4xl" | "6xl";
+  level?: "modal" | "nested";
+}) {
+  // Размеры для модальных окон
+  const sizeClasses = {
+    sm: "sm:max-w-sm",   // 384px
+    md: "sm:max-w-md",   // 448px
+    lg: "sm:max-w-lg",   // 512px
+    xl: "sm:max-w-xl",   // 576px
+    "2xl": "sm:max-w-2xl", // 672px
+    "4xl": "sm:max-w-4xl", // 896px
+    "6xl": "sm:max-w-6xl", // 1152px
+  };
+
+  // z-index для разных уровней модальных окон
+  const zIndexClasses = {
+    modal: "z-50",   // Базовый уровень модальных окон
+    nested: "z-[60]", // Вложенные модалки (если нужны)
+  };
+
   return (
     <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay />
+      <DialogOverlay level={level} />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
+          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-0 rounded-[20px] border p-0 shadow-2xl duration-200",
+          zIndexClasses[level],
+          sizeClasses[size],
           className,
         )}
         {...props}
@@ -76,7 +111,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+      className={cn("flex items-center justify-between p-6 border-b", className)}
       {...props}
     />
   );
@@ -86,10 +121,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className,
-      )}
+      className={cn("p-6 border-t flex gap-3", className)}
       {...props}
     />
   );

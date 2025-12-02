@@ -5,88 +5,81 @@
  * Все данные (привычки, категории, цели) и UI состояние теперь хранятся в store.
  * 
  * @module App
- * @see /core/store/index.ts
+ * @see /app/store/index.ts
  */
 
 import React, { useEffect } from 'react';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Sidebar } from '@/shared/components/layout';
-import { HabitsTable } from '@/modules/habit-tracker/features/habits';
-import { CalendarHeader } from '@/modules/habit-tracker/features/calendar';
-import { HabitsNotificationManager } from '@/modules/habit-tracker/features/notifications';
-import { NotificationPermissionBanner } from '@/shared/components/notifications';
-import { VersionIndicator } from '@/shared/components/layout';
-import { HabitTrackerModals } from '@/core/modals';
-import { DateConfig, HabitActions, ModalActions, GoalConfig, UndoConfig } from '@/modules/habit-tracker/features/habits/types';
-import { getDaysInMonth, formatDate, getDayName } from '@/shared/utils/date';
-import { useHabitsStore } from '@/core/store';
-import { recalculateStrength } from '@/modules/habit-tracker/features/strength';
-import { Habit } from '@/modules/habit-tracker/types';
-import { Tag } from '@/modules/habit-tracker/features/tags';
+import '@/app/i18n'; // Инициализация i18n
+import { AppRouter } from '@/app/router';
+import { HabitsNotificationManager } from '@/features/habit-notifications';
+import { NotificationPermissionBanner } from '@/features/notifications-permission';
+import { AppModals } from '@/app/providers';
+import type { DateConfig } from '@/entities/habit';
+import { getDaysInMonth, formatDate, getLocalizedDayName } from '@/shared/lib/date';
+import { useHabitsStore } from '@/app/store';
+import { recalculateStrength } from '@/entities/habit/lib/strength/strengthCalculator';
+import type { Habit, Tag } from '@/entities/habit';
+import { AppSidebar } from '@/widgets/app-sidebar';
+import { AppHeader } from '@/widgets/app-header';
+import { CheckSquare, ArrowLeft, Plus, Settings } from '@/shared/assets/icons/system';
+import { useTheme } from '@/features/theme-switcher';
+import { useLanguage } from '@/features/language-switcher';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 export default function App() {
+  // ==================== THEME ====================
+  // Инициализация темы из localStorage
+  useTheme();
+
+  // ==================== LANGUAGE ====================
+  // Инициализация языка из store
+  useLanguage();
+
   // ==================== ZUSTAND STORE ====================
   // Получаем все данные и actions из централизованного store
   const {
     // Данные
     habits,
     tags,
-    dailyGoals,
-    defaultDailyGoal,
     
     // UI состояние
-    currentSection,
-    isSidebarOpen,
     selectedMonth,
     selectedYear,
     
-    // Undo система
-    previousHabitsState,
-    
     // Модальные окна
-    newlyAddedHabitId,
     numericInputModal,
+    statsModal,
     isMonthYearPickerOpen,
-    editingGoal,
-    isManageHabitsModalOpen,
     isAddHabitModalOpen,
     
     // Actions: UI
-    setCurrentSection,
-    toggleSidebar,
     setSelectedDate,
     
     // Actions: Модальные окна
     openAddHabitModal,
     closeAddHabitModal,
-    openManageHabitsModal,
-    closeManageHabitsModal,
     openNumericInputModal,
     closeNumericInputModal,
+    openStatsModal,
+    closeStatsModal,
     openMonthYearPicker,
     closeMonthYearPicker,
-    setEditingGoal,
-    clearNewlyAddedHabitId,
     
     // Actions: Привычки
     addHabit,
     deleteHabit,
     updateHabit,
     toggleCompletion,
-    moveHabit,
-    clearAllCompletions,
-    undoClearAllCompletions,
     
     // Actions: Теги
     addTag,
     deleteTag,
     updateTagColor,
-    
-    // Actions: Цели
-    setDailyGoals,
-    setDefaultDailyGoal,
-    handleDefaultDailyGoalChange,
     
     // Actions: Внутренние
     updateHabitsStrength,
@@ -168,14 +161,6 @@ export default function App() {
     closeMonthYearPicker();
   };
 
-  // Обработчик сохранения из ManageHabitsModal
-  const handleManageHabitsSave = (updatedHabits: Habit[], updatedTags: Tag[]) => {
-    // Привычки уже сохранены через store (saveManageHabitsChanges)
-    // Теги тоже уже управляются через store
-    
-    closeManageHabitsModal();
-  };
-
   // ==================== GROUPED PROPS ====================
   
   // Group related props for HabitsTable
@@ -184,87 +169,151 @@ export default function App() {
     selectedYear,
     monthDays,
     formatDate,
-    getDayName,
-  };
-
-  const habitActions: HabitActions = {
-    onToggleCompletion: toggleCompletion,
-    onMoveHabit: moveHabit,
-    onUpdateHabit: updateHabit,
-  };
-
-  const modalActions: ModalActions = {
-    onAddHabit: openAddHabitModal,
-    onManageHabits: openManageHabitsModal,
-    onOpenNumericInput: openNumericInputModal,
-  };
-
-  const goalConfig: GoalConfig = {
-    dailyGoals,
-    editingGoal,
-    defaultDailyGoal,
-    onSetDailyGoals: setDailyGoals,
-    onSetEditingGoal: setEditingGoal,
-    onSetDefaultDailyGoal: handleDefaultDailyGoalChange,
-  };
-
-  const undoConfig: UndoConfig = {
-    canUndo: previousHabitsState !== null,
-    onClearAllCompletions: clearAllCompletions,
-    onUndoClearAllCompletions: undoClearAllCompletions,
+    getDayName: getLocalizedDayName, // Используем локализованную версию
   };
 
   // ==================== RENDER ====================
   
   return (
-    <div className="flex min-h-screen bg-white">
+    <BrowserRouter>
+      <AppContent
+        habits={habits}
+        numericInputModal={numericInputModal}
+        statsModal={statsModal}
+        isMonthYearPickerOpen={isMonthYearPickerOpen}
+        selectedMonth={selectedMonth}
+        selectedYear={selectedYear}
+        isAddHabitModalOpen={isAddHabitModalOpen}
+        monthDays={monthDays}
+        onNumericInputClose={closeNumericInputModal}
+        onNumericInputSave={handleNumericInputSave}
+        onNumericInputSkip={handleNumericInputSkip}
+        onStatsClose={closeStatsModal}
+        onMonthYearSelect={handleMonthYearSelect}
+        onMonthYearClose={closeMonthYearPicker}
+        onAddHabitClose={closeAddHabitModal}
+        onAddHabit={addHabit}
+      />
+    </BrowserRouter>
+  );
+}
+
+// Компонент контента для использования useLocation
+function AppContent({
+  habits,
+  numericInputModal,
+  statsModal,
+  isMonthYearPickerOpen,
+  selectedMonth,
+  selectedYear,
+  isAddHabitModalOpen,
+  monthDays,
+  onNumericInputClose,
+  onNumericInputSave,
+  onNumericInputSkip,
+  onStatsClose,
+  onMonthYearSelect,
+  onMonthYearClose,
+  onAddHabitClose,
+  onAddHabit,
+}: any) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { t } = useTranslation('common');
+  const { t: tHabits } = useTranslation('habits');
+  const { t: tApp } = useTranslation('app');
+  const isHomePage = location.pathname === '/';
+  const isManagePage = location.pathname === '/manage';
+  
+  // Получаем openAddHabitModal из store для кнопки в хеддере
+  const openAddHabitModal = useHabitsStore(state => state.openAddHabitModal);
+
+  return (
+    <div className="flex min-h-screen bg-bg-primary">
       {/* Notification Manager */}
       <HabitsNotificationManager habits={habits} />
       
-      {/* Sidebar */}
-      <Sidebar 
-        currentSection={currentSection} 
-        onSectionChange={setCurrentSection}
-        isOpen={isSidebarOpen}
-        onClose={() => toggleSidebar(false)}
-      />
-    
+      {/* Боковое меню */}
+      <AppSidebar />
+      
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto overflow-x-auto">
-        <div className="pl-5 pr-5 pt-12 pb-12">
-          <CalendarHeader />
-
-          {/* Habits List */}
+      <main className="flex-1 ml-[50px] overflow-y-auto overflow-x-auto">
+        {/* Header - единообразный для всех страниц */}
+        {isHomePage && (
+          <AppHeader
+            leftElement={<CheckSquare className="w-5 h-5 text-text-primary" />}
+            title={tApp('app.habitTracker')}
+            rightElement={
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={openAddHabitModal}
+                  variant="default"
+                  size="sm"
+                  title={tHabits('habit.addHabit')}
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.02em', textTransform: 'uppercase' }}>
+                    {tHabits('habit.addHabit')}
+                  </span>
+                </Button>
+                <Button
+                  onClick={() => navigate('/manage')}
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 rounded-md"
+                  title={t('navigation.manage')}
+                >
+                  <Settings className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            }
+          />
+        )}
+        
+        {isManagePage && (
+          <AppHeader
+            leftElement={
+              <button
+                onClick={() => navigate('/')}
+                className="p-1 hover:bg-bg-hover rounded-lg transition-colors"
+                aria-label={t('common.back')}
+              >
+                <ArrowLeft className="w-4 h-4 text-text-secondary" />
+              </button>
+            }
+            title={tHabits('manage.title')}
+          />
+        )}
+        
+        <div className="pl-5 pr-5 pb-12 pt-6">
+          {/* Router */}
           <DndProvider backend={HTML5Backend}>
-            <HabitsTable />
+            <AppRouter />
           </DndProvider>
         </div>
 
         {/* All Modals */}
-        <HabitTrackerModals
+        <AppModals
           numericInputModal={numericInputModal}
+          statsModal={statsModal}
           habits={habits}
-          onNumericInputClose={closeNumericInputModal}
-          onNumericInputSave={handleNumericInputSave}
-          onNumericInputSkip={handleNumericInputSkip}
+          onNumericInputClose={onNumericInputClose}
+          onNumericInputSave={onNumericInputSave}
+          onNumericInputSkip={onNumericInputSkip}
+          onStatsClose={onStatsClose}
           isMonthYearPickerOpen={isMonthYearPickerOpen}
           selectedMonth={selectedMonth}
           selectedYear={selectedYear}
-          onMonthYearSelect={handleMonthYearSelect}
-          onMonthYearClose={closeMonthYearPicker}
-          isManageHabitsModalOpen={isManageHabitsModalOpen}
-          tags={tags}
-          onManageHabitsClose={closeManageHabitsModal}
-          onManageHabitsSave={handleManageHabitsSave}
+          onMonthYearSelect={onMonthYearSelect}
+          onMonthYearClose={onMonthYearClose}
           isAddHabitModalOpen={isAddHabitModalOpen}
-          onAddHabitClose={closeAddHabitModal}
-          onAddHabit={addHabit}
+          onAddHabitClose={onAddHabitClose}
+          onAddHabit={onAddHabit}
           daysInMonth={monthDays.length}
         />
       </main>
       
       <NotificationPermissionBanner />
-      <VersionIndicator />
     </div>
   );
 }
